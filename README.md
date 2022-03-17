@@ -12,6 +12,13 @@ F2F (Face to Face)，使用实时音视频技术实现的"面对面"平台搭建
    1. 管理界面
    2. 管理服务
 
+## Arch
+
+@f2f/client
+@f2f/server
+@f2f/storage
+@f2f/...
+
 ## Todo
 
 ### 1. 用户访问/使用
