@@ -6,7 +6,10 @@ module.exports = function(sequelize, types) {
       unique: true,
       autoIncrement: true,
     },
-    role: {
+    // RTC 角色类型
+    // audience - pull
+    // speaker - push
+    RTCRole: {
       type: types.ENUM({
         values: ['audience', 'speaker']
       })
