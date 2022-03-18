@@ -1,42 +1,40 @@
 module.exports = function(sequelize, types) {
   const Room = sequelize.define('Room', {
     id: {
-      type: types.NUMBER,
+      autoIncrement: true,
+      type: types.INTEGER.UNSIGNED,
+      allowNull: false,
       primaryKey: true,
       unique: true,
-      autoIncrement: true,
     },
     name: {
       type: types.STRING(50),
       allowNull: true,
     },
     password: {
-      type: types.VIRTUAL,
-      set: function(val) {
-        this.setDataValue('password', val);
-      },
-      validate: {
-        isLongEnough: function(val) {
-          if (val.length < 4) {
-            throw new Error('Please choose a longer password')
-          }
-        }
-      }
+      type: types.STRING(50),
+      allowNull: true,
     },
     isOpen: {
       type: types.BOOLEAN(),
+      defaultValue: true,
     },
     startAt: {
       type: types.DATE(),
     },
     duration: {
-      type: types.NUMBER,
+      type: types.INTEGER.UNSIGNED,
+      defaultValue: 3600,
+    },
+    // RTC 房间媒体类型
+    // 'audio', 'video'
+    type: {
+      type: types.STRING(50),
+      allowNull: false,
+      defaultValue: "video",
     }
+  }, {
+    tableName: 'room'
   });
-  Room.associate = (models) => {
-    Room.belongsTo(models.Permission, {
-      foreignKey: 'permission'
-    });
-  }
   return Room;
 }

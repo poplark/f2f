@@ -1,23 +1,19 @@
 module.exports = function(sequelize, types) {
   return sequelize.define('Permission', {
     id: {
-      type: types.NUMBER,
+      autoIncrement: true,
+      type: types.INTEGER.UNSIGNED,
+      allowNull: false,
       primaryKey: true,
       unique: true,
-      autoIncrement: true,
     },
     // RTC 用户操作类型
+    // 'pull', 'push'
     RTCOperation: {
-      type: types.ENUM({
-        values: ['pull', 'push']
-      }),
+      type: types.STRING(50),
+      allowNull: false,
+      defaultValue: "pull",
     },
-    // RTC 房间媒体类型
-    RTCMedia: {
-      type: types.ENUM({
-        values: ['audio', 'video']
-      }),
-    }
   }, {
     tableName: 'permission'
   });
