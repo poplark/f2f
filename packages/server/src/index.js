@@ -1,10 +1,12 @@
 const Koa = require('koa');
+const bodyParser = require('koa-bodyparser');
 const cors = require('@koa/cors');
 const orm = require('@f2f/storage');
 const { port } = require('../config');
 const router = require('./router');
 
 const app = new Koa(cors());
+app.use(bodyParser());
 app.use(cors());
 app.use(orm.middleware);
 
