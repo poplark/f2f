@@ -5,13 +5,13 @@
   "author": "poplark <songkang666@126.com>",
   "homepage": "https://github.com/poplark/f2f#readme",
   "license": "ISC",
-  "main": "lib/server.js",
+  "main": "src/index.js",
   "directories": {
     "lib": "lib",
     "test": "__tests__"
   },
   "files": [
-    "lib"
+    "src"
   ],
   "publishConfig": {
     "registry": "https://registry.yarnpkg.com"
@@ -21,9 +21,20 @@
     "url": "git+https://github.com/poplark/f2f.git"
   },
   "scripts": {
-    "test": "echo \"Error: run tests from root\" && exit 1"
+    "dev": "pm2 start src/index.js --name f2f-server --watch"
   },
   "bugs": {
     "url": "https://github.com/poplark/f2f/issues"
+  },
+  "dependencies": {
+    "@f2f/storage": "^1.0.0",
+    "@koa/cors": "^3.2.0",
+    "@koa/router": "^10.1.1",
+    "koa": "^2.13.4",
+    "koa-bodyparser": "^4.3.0",
+    "koa-session": "^6.2.0"
+  },
+  "devDependencies": {
+    "pm2": "^5.2.0"
   }
 }
