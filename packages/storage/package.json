@@ -5,7 +5,7 @@
   "author": "poplark <songkang666@126.com>",
   "homepage": "https://github.com/poplark/f2f#readme",
   "license": "ISC",
-  "main": "lib/storage.js",
+  "main": "index.js",
   "directories": {
     "lib": "lib",
     "test": "__tests__"
@@ -25,5 +25,10 @@
   },
   "bugs": {
     "url": "https://github.com/poplark/f2f/issues"
+  },
+  "dependencies": {
+    "koa-orm": "^3.2.1",
+    "md5": "^2.3.0",
+    "mysql2": "^2.3.3"
   }
 }
