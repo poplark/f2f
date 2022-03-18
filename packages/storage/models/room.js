@@ -29,8 +29,8 @@ module.exports = function(sequelize, types) {
     startAt: {
       type: types.DATE(),
     },
-    endAt: {
-      type: types.DATE(),
+    duration: {
+      type: types.NUMBER,
     }
   });
   Room.associate = (models) => {

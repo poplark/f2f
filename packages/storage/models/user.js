@@ -13,9 +13,6 @@ module.exports = function(sequelize, types) {
       type: types.STRING(50),
       allowNull: true,
     },
-    salt: {
-      type: types.STRING(50),
-    },
     password_hash: types.STRING,
     password: {
       type: types.VIRTUAL,
