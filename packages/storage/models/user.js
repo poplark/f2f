@@ -15,12 +15,18 @@ module.exports = function(sequelize, types) {
       allowNull: false,
       unique: true,
     },
+    salt: {
+      type: types.STRING(8),
+      defaultValue: function() {
+        return Math.random().toString(36).slice(-8);
+      }
+    },
     password_hash: types.STRING(255),
     password: {
       type: types.VIRTUAL,
       set: function(val) {
         this.setDataValue('password', val);
-        this.setDataValue('password_hash', md5(val+md5(config.salt)));
+        this.setDataValue('password_hash', md5(val+md5(this.salt)));
       },
       validate: {
         isLongEnough: function(val) {

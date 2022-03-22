@@ -18,14 +18,12 @@ const pre = Object.assign({
   port: 3306,
   username: 'root',
   password: 'root',
-  salt: 'pre-env',
 }, common) ;
 const prod = Object.assign({
   host: 'xxx.xxx.xxx.xxx',
   port: 3306,
   username: 'root',
   password: 'root',
-  salt: 'prod-env',
 }, common) ;
 
 module.exports = function () {

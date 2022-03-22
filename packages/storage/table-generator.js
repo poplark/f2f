@@ -23,7 +23,7 @@ require('./models/room')(sequelize, Sequelize.DataTypes);
 // Create all the table defined using
 // sequelize in Database
 
-if (process.env.NODE_ENV === production) {
+if (process.env.NODE_ENV === 'production') {
 
 // Sync all models that are not
 // already in the database
