@@ -1,4 +1,8 @@
 import { createApp } from 'vue'
-import App from './App.vue'
+import Layout from './Layout.vue'
+import { router } from './router'
 
-createApp(App).mount('#app')
+const app = createApp(Layout);
+app.use(router);
+
+app.mount('#app');
