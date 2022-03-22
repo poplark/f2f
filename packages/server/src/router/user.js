@@ -21,7 +21,16 @@ module.exports = function(router) {
     }
   });
   // todo JWT
-  router.post('/user/login', async (ctx, next) => {
+  router.post('/login', async (ctx) => {
+    const data = ctx.request.body;
+    console.log('post data:: ', data);
+    ctx.body = data;
+  });
+  router.post('/logout', async (ctx) => {
+    console.log('post data:: ', data);
+    ctx.body = data;
+  });
+  router.post('/register', async (ctx, next) => {
     const data = ctx.request.body;
     console.log('post data:: ', data);
     ctx.body = data;

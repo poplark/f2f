@@ -19,7 +19,7 @@ module.exports = function(router) {
   router.get('/role', async (ctx) => {
     const orm = ctx.orm();
     const { Permission, Role } = orm;
-    const roles = Role.findAll();
+    const roles = await Role.findAll();
     if (roles.length > 0) {
       ctx.body = roles;
       return;
@@ -62,7 +62,7 @@ module.exports = function(router) {
       password: `123456`,
       role: role.id,
     });
-    await user.save()
+    await user.save();
     ctx.body = user;
   });
 }
