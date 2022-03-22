@@ -14,7 +14,7 @@ export function post(path, data) {
       'Content-Type': 'application/json'
       // 'Content-Type': 'application/x-www-form-urlencoded',
     },
-    data: JSON.stringify(data)
+    body: JSON.stringify(data)
   }).then((resp) => {
     const data = resp.json();
     console.log('post:: ', data);

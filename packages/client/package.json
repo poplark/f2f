@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "element-plus": "^2.1.4",
+    "md5": "^2.3.0",
     "vue": "^3.2.25",
     "vue-router": "^4.0.14"
   },

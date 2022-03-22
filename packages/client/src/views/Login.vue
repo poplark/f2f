@@ -3,8 +3,8 @@
     <h1>Login</h1>
 
     <div>
-      <input @change="onUsernameChange" placeholder="用户名/手机号"/>
-      <input type="password" @change="onPasswordChange" placeholder="密码"/>
+      <input v-model="state.username" placeholder="用户名/手机号"/>
+      <input type="password" v-model="state.password" placeholder="密码"/>
       <button @click="login">登录</button>
     </div>
   </div>
@@ -12,6 +12,7 @@
 
 <script>
 import { reactive } from 'vue';
+import * as md5 from 'md5';
 import { post } from '../utils/service';
 import { router } from '../router';
 
@@ -23,19 +24,17 @@ export default {
       password: '',
     });
 
-    // todo - debounce
-    function onUsernameChange(v) {
-      console.log('username ', v);
-    }
-    // todo - debounce
-    function onPasswordChange(v) {
-      console.log('password ', v);
-    }
-
     function login() {
       const { username, password } = state;
+
+      if (!username || !password) {
+        return;
+      }
+
       const account = username;
-      const passwd = password;
+      const passwd = md5(password);
+
+      console.log('login:::: ', username, password, passwd);
 
       post('/login', {account, passwd})
         .then((data) => {
@@ -48,8 +47,7 @@ export default {
         });
     }
     return {
-      onUsernameChange,
-      onPasswordChange,
+      state,
       login,
     }
   },
