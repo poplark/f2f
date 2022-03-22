@@ -2,11 +2,16 @@
 // This starter template is using Vue 3 <script setup> SFCs
 // Check out https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup
 import HelloWorld from './components/HelloWorld.vue'
+import User from './components/User.vue'
+import InitTest from './components/InitTest.vue'
 </script>
 
 <template>
-  <img alt="Vue logo" src="./assets/logo.png" />
-  <HelloWorld msg="Hello Vue 3 + Vite" />
+  <div>
+    <img alt="Vue logo" src="./assets/logo.png" />
+    <User />
+    <init-test/>
+  </div>
 </template>
 
 <style>
