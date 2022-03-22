@@ -9,12 +9,16 @@ const rootRouter = new Router();
 const initRouter = new Router({
   prefix: '/init-test'
 });
-
 init(initRouter);
-
 rootRouter.use(initRouter.routes());
 
-/***** user *****/
-user(rootRouter);
+/***** api *****/
+// 在 Router 上使用中间件，来 嵌套路由
+const apiRouter = new Router({
+  prefix: '/api'
+});
+// api - user
+user(apiRouter);
+rootRouter.use(apiRouter.routes());
 
 module.exports = rootRouter;

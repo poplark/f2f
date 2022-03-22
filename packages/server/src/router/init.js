@@ -1,5 +1,5 @@
 module.exports = function(router) {
-  router.get('/initpermission', async (ctx) => {
+  router.get('/permission', async (ctx) => {
     const { Permission } = ctx.orm();
     const permissions = await Permission.findAll();
     if (permissions.length > 0) {
@@ -16,7 +16,7 @@ module.exports = function(router) {
     await p2.save();
     ctx.body = [p1, p2];
   });
-  router.get('/initrole', async (ctx) => {
+  router.get('/role', async (ctx) => {
     const orm = ctx.orm();
     const { Permission, Role } = orm;
     const roles = Role.findAll();

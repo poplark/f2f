@@ -1,9 +1,19 @@
 module.exports = function(router) {
   // need auth
-  router.get('/user/:username', async (ctx) => {
-    const { username } = ctx.params;
+  router.get('/user', async (ctx) => {
+    const { username } = ctx.query;
     const { User } = ctx.orm();
     const user = await User.findOne({where: {username}});
+    if (!user) {
+      ctx.body = 'not found';
+    } else {
+      ctx.body = user;
+    }
+  });
+  router.get('/user/:id', async (ctx) => {
+    const { id } = ctx.params;
+    const { User } = ctx.orm();
+    const user = await User.findOne({where: {id}});
     if (!user) {
       ctx.body = 'not found';
     } else {
