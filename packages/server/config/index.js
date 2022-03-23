@@ -1,5 +1,10 @@
+const { logger } = require('./logger');
+
 const PORT = 3001;
 
-module.exports = {
+const config = {
   port: PORT,
+  logger,
 }
+
+module.exports = config;

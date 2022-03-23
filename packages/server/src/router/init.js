@@ -1,3 +1,6 @@
+const md5 = require('md5');
+const { logger } = require('../../config');
+
 module.exports = function(router) {
   router.get('/permission', async (ctx) => {
     const { Permission } = ctx.orm();
@@ -43,14 +46,14 @@ module.exports = function(router) {
     ctx.body = [ role1, role2 ];
   });
   router.get('/adduser', async (ctx) => {
-    console.log('ctx:: ', Object.keys(ctx));
-    console.log('params:: ', ctx.query);
+    logger.debug('ctx:: ', Object.keys(ctx));
+    logger.debug('params:: ', ctx.query);
     const { username } = ctx.query;
-    console.log('username:: ', username);
+    logger.debug('username:: ', username);
     const { Role, User } = ctx.orm();
     if (username) {
       const user = await User.findOne({where:{username}});
-      console.log('user:: ', user);
+      logger.debug('user:: ', user);
       if (user) {
         ctx.body = user;
         return;
@@ -59,7 +62,7 @@ module.exports = function(router) {
     const role = await Role.findOne({where: {RTCRole: 'speaker'}});
     const user = new User({
       username: username || `test-${Date.now()}`,
-      password: `123456`,
+      password: md5(`123456`),
       role: role.id,
     });
     await user.save();

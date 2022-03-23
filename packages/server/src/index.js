@@ -2,7 +2,7 @@ const Koa = require('koa');
 const bodyParser = require('koa-bodyparser');
 const cors = require('@koa/cors');
 const orm = require('@f2f/storage');
-const { port } = require('../config');
+const { port, logger } = require('../config');
 const router = require('./router');
 
 const app = new Koa(cors());
@@ -27,5 +27,5 @@ app.use(orm.middleware);
 app.use(router.routes()).use(router.allowedMethods());
 
 app.listen(port, () => {
-  console.log(`应用已经启动，http://localhost:${port}`);
+  logger.info(`应用已经启动，http://localhost:${port}`);
 });

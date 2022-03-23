@@ -4,6 +4,7 @@ const {
   isValidPassword,
   findUserByAccount,
 } = require('../controller/user');
+const { logger } = require('../../config');
 
 module.exports = function(router) {
   // need auth
@@ -30,13 +31,11 @@ module.exports = function(router) {
     const data = ctx.request.body;
     const { account, passwd } = data;
 
-    console.log('login:::: ', account, passwd);
-
     const user = await findUserByAccount(ctx, account);
 
-    console.log('user::::', user);
+    logger.debug('login:: ', account, passwd, user);
 
-    if (user && isValidPassword(user, passwd)) {
+    if (isValidPassword(user, passwd)) {
       if (user.active) {
         ctx.body = user;
       } else {
@@ -47,12 +46,12 @@ module.exports = function(router) {
     }
   });
   router.post('/logout', async (ctx) => {
-    console.log('post data:: ', data);
+    logger.debug('post data:: ', data);
     ctx.body = data;
   });
   router.post('/register', async (ctx, next) => {
     const data = ctx.request.body;
-    console.log('post data:: ', data);
+    logger.debug('post data:: ', data);
     ctx.body = data;
   });
 }

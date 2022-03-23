@@ -1,5 +1,6 @@
 const md5 = require('md5');
 const { Op } = require('sequelize');
+const { logger } = require('../../config');
 
 const ClientRequestAttributes = [
   'id', 'username', 'active', 'role'
@@ -36,7 +37,7 @@ async function findUserByUserName(ctx, username) {
 async function findUserByAccount(ctx, account) {
   const { User } = ctx.orm();
   const user = await User.findOne({
-    attributes: ClientRequestAttributes,
+    attributes: ManagerRequestAttributes,
     where: {
       [Op.or]: [{id: account}, {username: account}]
     }
@@ -44,9 +45,11 @@ async function findUserByAccount(ctx, account) {
   return user;
 }
 
-async function isValidPassword(user, password) {
-  const passwd = md5(password + md5(salt));
-  return user.password_hash === passwd;
+function isValidPassword(user, password) {
+  if (!user) return false;
+  const salt = user.getDataValue('salt');
+  const res = user.getDataValue('password_hash') === md5(password + md5(salt));
+  return res;
 }
 
 // todo
