@@ -8,6 +8,7 @@
       <button @click="login">登录</button>
       <button @click="getToken">Token</button>
       <button @click="refreshToken">RefreshToken</button>
+      <button @click="getUser">GetUser</button>
     </div>
   </div>
 </template>
@@ -15,7 +16,7 @@
 <script>
 import { reactive } from 'vue';
 import * as md5 from 'md5';
-import { post, getToken, refreshToken } from '../utils/service';
+import { get, post, getToken, refreshToken } from '../utils/service';
 import { router } from '../router';
 
 export default {
@@ -72,11 +73,26 @@ export default {
           console.error('_refreshToken::: ', err);
         });
     }
+    function getUser() {
+      const { username } = state;
+
+      if (!username) {
+        return;
+      }
+      get(`/user?username=${username}`)
+        .then((data) => {
+          console.log('get user::: ', data);
+        })
+        .catch((err) => {
+          console.error('get user::: ', err);
+        });
+    }
     return {
       state,
       login,
       getToken: _getToken,
       refreshToken: _refreshToken,
+      getUser,
     }
   },
 };

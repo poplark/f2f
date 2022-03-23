@@ -71,7 +71,6 @@ module.exports = function(router) {
       if (user.active) {
         ctx.body = {
           token: generateJWT(user),
-          maxAge: jwtConfig.maxAge,
         }
       } else {
         ctx.status = 401;
@@ -89,7 +88,6 @@ module.exports = function(router) {
     if (user && user.active) {
       ctx.body = {
         token: generateJWT(user),
-        maxAge: jwtConfig.maxAge,
       }
     } else {
       ctx.status = 403;
