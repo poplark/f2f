@@ -27,13 +27,14 @@ if (process.env.NODE_ENV === 'production') {
 
 // Sync all models that are not
 // already in the database
-// sequelize.sync();
+sequelize.sync();
 
 } else {
 
 // Force sync all models
 // It will drop the table first
 // and re-create it afterwards
-sequelize.sync({force:true});
+sequelize.sync();
+// sequelize.sync({force:true});
 
 }

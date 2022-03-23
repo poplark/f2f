@@ -26,7 +26,7 @@ module.exports = function(sequelize, types) {
       type: types.VIRTUAL,
       set: function(val) {
         this.setDataValue('password', val);
-        this.setDataValue('password_hash', md5(val+md5(this.salt)));
+        this.setDataValue('password_hash', md5(val+md5(this.getDataValue('salt'))));
       },
       validate: {
         isLongEnough: function(val) {
