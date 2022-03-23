@@ -27,8 +27,8 @@
     "url": "https://github.com/poplark/f2f/issues"
   },
   "dependencies": {
-    "koa-orm": "^3.2.1",
     "md5": "^2.3.0",
-    "mysql2": "^2.3.3"
+    "mysql2": "^2.3.3",
+    "sequelize": "^6.17.0"
   }
 }

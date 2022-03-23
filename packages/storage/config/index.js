@@ -2,7 +2,6 @@ const path = require('path');
 
 const common = {
   name: 'f2f',
-  modelPath: path.join(__dirname, '../models'),
   database: 'f2f',
   dialect: 'mysql',
   pool: {

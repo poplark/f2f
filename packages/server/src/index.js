@@ -5,10 +5,10 @@ const orm = require('@f2f/storage');
 const { port, logger } = require('../config');
 const router = require('./router');
 
-const app = new Koa(cors());
+const app = new Koa();
 app.use(bodyParser());
 app.use(cors());
-app.use(orm.middleware);
+app.use(orm());
 
 // app.use(async (ctx, next) => {
 //   // const { User } = ctx.orm('user');

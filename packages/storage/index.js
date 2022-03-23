@@ -1,5 +1,18 @@
+const Sequelize = require('sequelize');
 const config = require('./config')();
+const defineModels = require('./models');
 
-const orm = require('koa-orm')(config);
+module.exports = function() {
+  const sequelize = new Sequelize(config);
+  defineModels(sequelize, Sequelize.DataTypes);
 
-module.exports = orm;
+  return function(ctx, next) {
+    if (ctx.orm) {
+      return next();
+    }
+    ctx.orm = function () {
+      return sequelize.models;
+    }
+    return next();
+  }
+}
