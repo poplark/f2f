@@ -30,3 +30,38 @@ export function rawGet(path) {
       return data;
     });
 }
+
+let token = '';
+let maxAge = 24 * 60 * 60;
+export async function getToken(username, password) {
+  return fetch('/api/token', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+      // 'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: JSON.stringify({
+      username,
+      password,
+    }),
+  }).then((resp) => resp.json()
+  ).then((data) => {
+    console.log('token:: ', data);
+    token = data.token;
+    maxAge = data.maxAge;
+  });
+}
+export function refreshToken() {
+  return fetch('/api/refreshToken', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+  }).then((resp) => resp.json()
+  ).then((data) => {
+    console.log('refreshToken:: ', data);
+    token = data.token;
+    maxAge = data.maxAge;
+  });
+}

@@ -6,6 +6,8 @@
       <input v-model="state.username" placeholder="用户名/手机号"/>
       <input type="password" v-model="state.password" placeholder="密码"/>
       <button @click="login">登录</button>
+      <button @click="getToken">Token</button>
+      <button @click="refreshToken">RefreshToken</button>
     </div>
   </div>
 </template>
@@ -13,7 +15,7 @@
 <script>
 import { reactive } from 'vue';
 import * as md5 from 'md5';
-import { post } from '../utils/service';
+import { post, getToken, refreshToken } from '../utils/service';
 import { router } from '../router';
 
 export default {
@@ -36,6 +38,7 @@ export default {
 
       console.log('login:::: ', username, password, passwd);
 
+      return token(account, passwd);
       post('/login', {account, passwd})
         .then((data) => {
           console.log('TODO - login succeed', data);
@@ -46,9 +49,34 @@ export default {
           console.error('TODO - login failed', err);
         });
     }
+    function _getToken() {
+      const { username, password } = state;
+
+      if (!username || !password) {
+        return;
+      }
+
+      const account = username;
+      const passwd = md5(password);
+
+      console.log('_getToken:::: ', username, password, passwd);
+
+      getToken(account, passwd)
+        .catch((err) => {
+          console.error('_getToken::: ', err);
+        });
+    }
+    function _refreshToken() {
+      refreshToken()
+        .catch((err) => {
+          console.error('_refreshToken::: ', err);
+        });
+    }
     return {
       state,
       login,
+      getToken: _getToken,
+      refreshToken: _refreshToken,
     }
   },
 };

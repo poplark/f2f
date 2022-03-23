@@ -30,8 +30,10 @@
     "@f2f/storage": "^1.0.0",
     "@koa/cors": "^3.2.0",
     "@koa/router": "^10.1.1",
+    "jsonwebtoken": "^8.5.1",
     "koa": "^2.13.4",
     "koa-bodyparser": "^4.3.0",
+    "koa-jwt": "^4.0.3",
     "koa-session": "^6.2.0",
     "log4js": "^6.4.4"
   },

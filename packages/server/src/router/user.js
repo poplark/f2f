@@ -3,8 +3,10 @@ const {
   findUserById,
   isValidPassword,
   findUserByAccount,
+  generateJWT,
+  getJWTInfo,
 } = require('../controller/user');
-const { logger } = require('../../config');
+const { logger, jwtConfig } = require('../../config');
 
 module.exports = function(router) {
   // need auth
@@ -34,10 +36,12 @@ module.exports = function(router) {
     const user = await findUserByAccount(ctx, account);
 
     logger.debug('login:: ', account, passwd, user);
+    logger.debug('session:: ', ctx.session);
 
     if (isValidPassword(user, passwd)) {
       if (user.active) {
-        ctx.body = user;
+        ctx.session.userName = user.username;
+        ctx.body = '登录成功';
       } else {
         ctx.status = 401;
       }
@@ -53,5 +57,42 @@ module.exports = function(router) {
     const data = ctx.request.body;
     logger.debug('post data:: ', data);
     ctx.body = data;
+  });
+  router.post('/token', async (ctx) => {
+    logger.debug('headers::: ', Object.keys(ctx.request.headers));
+    // const { Authorization } = ctx.request.headers;
+    const { username, password } = ctx.request.body;
+
+    const user = await findUserByAccount(ctx, username);
+
+    logger.debug('token:: ', username, password, user);
+
+    if (isValidPassword(user, password)) {
+      if (user.active) {
+        ctx.body = {
+          token: generateJWT(user),
+          maxAge: jwtConfig.maxAge,
+        }
+      } else {
+        ctx.status = 401;
+      }
+    } else {
+      ctx.status = 403;
+    }
+  });
+  router.post('/refreshToken', async (ctx) => {
+    const { authorization } = ctx.request.headers;
+    logger.debug('authorization::: ', authorization);
+    const info = getJWTInfo(authorization.split(' ')[1]);
+    logger.debug('info::: ', info);
+    const user = await findUserById(ctx, info.id);
+    if (user && user.active) {
+      ctx.body = {
+        token: generateJWT(user),
+        maxAge: jwtConfig.maxAge,
+      }
+    } else {
+      ctx.status = 403;
+    }
   });
 }

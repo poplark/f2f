@@ -1,13 +1,17 @@
 const Koa = require('koa');
 const bodyParser = require('koa-bodyparser');
 const cors = require('@koa/cors');
+const jwt = require('koa-jwt');
 const orm = require('@f2f/storage');
-const { port, logger } = require('../config');
+const { port, logger, jwtConfig } = require('../config');
 const router = require('./router');
 
 const app = new Koa();
 app.use(bodyParser());
 app.use(cors());
+app.use(jwt({ secret: jwtConfig.keys.private }).unless({
+  path: [/\/(login|token|init-test)/]
+}));
 app.use(orm());
 
 // app.use(async (ctx, next) => {
