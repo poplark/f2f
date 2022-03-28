@@ -3,11 +3,9 @@ const { logger } = require('./logger');
 const PORT = 3001;
 
 const jwtConfig = {
-  // maxAge: 24 * 60 * 60, // second
-  maxAge: 10, // second
+  maxAge: 24 * 60 * 60, // second
   keys: {
-    // private: 'shhhhh',
-    private: 'whatareyou',
+    private: 'wh0areyou',
   }
 }
 
