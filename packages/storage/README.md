@@ -12,7 +12,7 @@ const storage = require('@f2f/storage');
 
 ### steps
 
-1. add koa-orm, mysql2
+1. add sequelize, mysql2
 2. 创建数据库
 3. 写 sequelize 格式的 models 或 直接在数据库中添加表
 
