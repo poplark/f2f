@@ -9,8 +9,8 @@ const router = require('./router');
 const app = new Koa();
 app.use(bodyParser());
 app.use(cors());
-app.use(jwt({ secret: jwtConfig.keys.private }).unless({
-  path: [/\/(login|token|init-test)/]
+app.use(jwt({ secret: jwtConfig.accessToken.keys.private }).unless({
+  path: [/\/(register|token|refreshToken|init-test)/]
 }));
 app.use(orm());
 

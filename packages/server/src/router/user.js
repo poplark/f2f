@@ -6,7 +6,7 @@ const {
   generateJWT,
   getJWTInfo,
 } = require('../controller/user');
-const { logger, jwtConfig } = require('../../config');
+const { logger } = require('../../config');
 
 module.exports = function(router) {
   // need auth
@@ -69,9 +69,7 @@ module.exports = function(router) {
 
     if (isValidPassword(user, password)) {
       if (user.active) {
-        ctx.body = {
-          token: generateJWT(user),
-        }
+        ctx.body = generateJWT(user);
       } else {
         ctx.status = 401;
       }
@@ -84,11 +82,10 @@ module.exports = function(router) {
     logger.debug('authorization::: ', authorization);
     const info = getJWTInfo(authorization.split(' ')[1]);
     logger.debug('info::: ', info);
+
     const user = await findUserById(ctx, info.id);
     if (user && user.active) {
-      ctx.body = {
-        token: generateJWT(user),
-      }
+      ctx.body = generateJWT(user);
     } else {
       ctx.status = 403;
     }

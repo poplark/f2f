@@ -63,14 +63,19 @@ function generateJWT(user) {
     id: user.id,
     username: user.username,
   }
-  return jwt.sign(_user, jwtConfig.keys.private, {
-    expiresIn: jwtConfig.maxAge
-  });
+  return {
+    accessToken: jwt.sign(_user, jwtConfig.accessToken.keys.private, {
+      expiresIn: jwtConfig.accessToken.maxAge
+    }),
+    refreshToken: jwt.sign(_user, jwtConfig.refreshToken.keys.private, {
+      expiresIn: jwtConfig.refreshToken.maxAge
+    })
+  }
 }
 
 function getJWTInfo(token) {
   if (!token) throw new Error('invalid token');
-  return jwt.verify(token, jwtConfig.keys.private);
+  return jwt.verify(token, jwtConfig.refreshToken.keys.private);
 }
 
 module.exports = {
