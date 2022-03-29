@@ -23,6 +23,19 @@ export function rawGet(path) {
     });
 }
 
+export async function register(username, password) {
+  return fetch('/api/register', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+      // 'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: JSON.stringify({
+      username,
+      password,
+    }),
+  }).then((resp) => resp.json());
+}
 export async function getToken(username, password) {
   return fetch('/api/token', {
     method: 'POST',
@@ -42,7 +55,7 @@ export async function getToken(username, password) {
     updateExpires(access_token);
   });
 }
-export function refreshToken() {
+export async function refreshToken() {
   return fetch('/api/refreshToken', {
     method: 'POST',
     headers: {

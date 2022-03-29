@@ -30,6 +30,7 @@
     "@f2f/storage": "^1.0.0",
     "@koa/cors": "^3.2.0",
     "@koa/router": "^10.1.1",
+    "js-base64": "^3.7.2",
     "jsonwebtoken": "^8.5.1",
     "koa": "^2.13.4",
     "koa-bodyparser": "^4.3.0",

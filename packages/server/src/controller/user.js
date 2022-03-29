@@ -2,6 +2,7 @@ const md5 = require('md5');
 const { Op } = require('sequelize');
 const jwt = require('jsonwebtoken');
 const { jwtConfig } = require('../../config');
+const { logger } = require('../../config');
 
 const ClientRequestAttributes = [
   'id', 'username', 'active', 'role'
@@ -9,6 +10,14 @@ const ClientRequestAttributes = [
 const ManagerRequestAttributes = [
   'salt', 'password_hash'
 ].concat(ClientRequestAttributes);
+
+function extractUserInfo(user) {
+  let res = {};
+  for (let key of ClientRequestAttributes) {
+    res[key] = user.getDataValue(key);
+  }
+  return res;
+}
 
 async function findUserById(ctx, id) {
   const { User } = ctx.orm();
@@ -47,6 +56,20 @@ async function findUserByAccount(ctx, account) {
   return user;
 }
 
+async function createUser(ctx, username, password, roleInfo) {
+  const { User } = ctx.orm();
+
+  const user = new User({
+    username: username,
+    password: password,
+    role: roleInfo.id,
+  });
+
+  await user.save();
+
+  return user;
+}
+
 function isValidPassword(user, password) {
   if (!user) return false;
   const salt = user.getDataValue('salt');
@@ -78,9 +101,11 @@ function getJWTInfo(token) {
 }
 
 module.exports = {
+  extractUserInfo,
   findUserById,
   findUserByUserName,
   findUserByAccount,
+  createUser,
   isValidPassword,
   generateJWT,
   getJWTInfo,
