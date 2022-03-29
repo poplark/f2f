@@ -86,6 +86,27 @@ export default {
         .catch((err) => {
           console.error('get user::: ', err);
         });
+      get(`/user?username=${username}`)
+        .then((data) => {
+          console.log('get user222::: ', data);
+        })
+        .catch((err) => {
+          console.error('get user222::: ', err);
+        });
+      get(`/user?username=${username}`)
+        .then((data) => {
+          console.log('get user333::: ', data);
+        })
+        .catch((err) => {
+          console.error('get user333::: ', err);
+        });
+      get(`/user?username=${username}`)
+        .then((data) => {
+          console.log('get user444::: ', data);
+        })
+        .catch((err) => {
+          console.error('get user444::: ', err);
+        });
     }
     return {
       state,

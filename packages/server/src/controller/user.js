@@ -74,7 +74,6 @@ function generateJWT(user) {
 }
 
 function getJWTInfo(token) {
-  if (!token) throw new Error('invalid token');
   return jwt.verify(token, jwtConfig.refreshToken.keys.private);
 }
 

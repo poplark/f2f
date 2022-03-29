@@ -60,7 +60,7 @@ module.exports = function(router) {
   });
   router.post('/token', async (ctx) => {
     logger.debug('headers::: ', Object.keys(ctx.request.headers));
-    // const { Authorization } = ctx.request.headers;
+    // const { authorization } = ctx.request.headers;
     const { username, password } = ctx.request.body;
 
     const user = await findUserByAccount(ctx, username);
@@ -78,9 +78,17 @@ module.exports = function(router) {
     }
   });
   router.post('/refreshToken', async (ctx) => {
-    const { authorization } = ctx.request.headers;
-    logger.debug('authorization::: ', authorization);
-    const info = getJWTInfo(authorization.split(' ')[1]);
+    // const { authorization } = ctx.request.headers;
+    const { refreshToken } = ctx.request.body;
+    logger.debug('refreshToken::: ', refreshToken);
+    let info;
+    try {
+      info = getJWTInfo(refreshToken);
+    } catch (err) {
+      ctx.status = 401;
+      ctx.body = err;
+      return;
+    }
     logger.debug('info::: ', info);
 
     const user = await findUserById(ctx, info.id);

@@ -1,66 +1,10 @@
 import { decode } from 'js-base64';
 
-let token = '';
+let access_token = '';
+let refresh_token = '';
 let expires = 0;
-
-function isExpired() {
-  return expires === 0 || Date.now() >= expires * 1000;
-}
-function isNearExpired() {
-  // 少于 1 小时，就自动刷新 token
-  console.log('Now::: ', Date.now(), expires, expires * 1000 - Date.now());
-  return expires * 1000 - Date.now() < 6 * 1000;
-}
-
-function updateExpires(token) {
-  try {
-    const infoCode = token.split('.')[1];
-    expires = JSON.parse(decode(infoCode)).exp;
-  } catch (err) {
-    throw new Error('invalid token');
-  }
-}
-
-function _get(path) {
-  return fetch('/api' + path, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-      // 'Content-Type': 'application/x-www-form-urlencoded',
-    },
-  }).then((resp) => {
-    const data = resp.json();
-    console.log('get:: ', data);
-    return data;
-  });
-}
-
-function _post(path, data) {
-  return fetch('/api' + path, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-      // 'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: JSON.stringify(data)
-  }).then((resp) => {
-    const data = resp.json();
-    console.log('post:: ', data);
-    return data;
-  });
-}
-
-function request(method, ...args) {
-  if (isExpired()) {
-    return Promise.reject('token expired');
-  }
-  if (isNearExpired()) {
-    return refreshToken().then(() => method(...args));
-  }
-  return method(...args);
-}
+let isRefreshingToken = false;
+const requests = [];
 
 export function get(path) {
   return request(_get, path);
@@ -92,9 +36,10 @@ export async function getToken(username, password) {
     }),
   }).then((resp) => resp.json()
   ).then((data) => {
-    console.log('token:: ', data);
-    token = data.token;
-    updateExpires(token);
+    console.log('accessToken:: ', data);
+    access_token = data.accessToken;
+    refresh_token = data.refreshToken;
+    updateExpires(access_token);
   });
 }
 export function refreshToken() {
@@ -102,12 +47,105 @@ export function refreshToken() {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
     },
+    body: JSON.stringify({
+      refreshToken: refresh_token,
+    }),
   }).then((resp) => resp.json()
   ).then((data) => {
     console.log('refreshToken:: ', data);
-    token = data.token;
-    updateExpires(token);
+    access_token = data.accessToken;
+    refresh_token = data.refreshToken;
+    updateExpires(access_token);
   });
+}
+
+function request(method, ...args) {
+  if (isRefreshingToken) {
+    return new Promise((resolve, reject) => {
+      requests.push([resolve, reject]);
+    }).then(() => {
+      return method(...args);
+    });
+  }
+  if (isExpired()) {
+    return refresh();
+  }
+  return method(...args).catch((err) => {
+    console.warn('request failed:: ', err);
+    if (err.message === '401') {
+      return refresh();
+    } else {
+      throw err;
+    }
+  });
+  function refresh() {
+    isRefreshingToken = true;
+    return refreshToken().catch((err) => {
+      // todo - jump to login page
+      isRefreshingToken = false;
+      requests.forEach((item) => {
+        const [_, reject] = item;
+        reject();
+      });
+      throw err;
+    }).then(() => {
+      isRefreshingToken = false;
+      requests.forEach((item) => {
+        const [resolve] = item;
+        resolve();
+      });
+      return method(...args);
+    });
+  }
+}
+
+function _get(path) {
+  return fetch('/api' + path, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${access_token}`,
+      // 'Content-Type': 'application/x-www-form-urlencoded',
+    },
+  }).then((resp) => {
+    if (resp.ok) {
+      return resp.json();
+    // } else if (resp.status === 401) {
+    } else {
+      throw new Error(resp.status);
+    }
+  });
+}
+
+function _post(path, data) {
+  return fetch('/api' + path, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${access_token}`,
+      // 'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: JSON.stringify(data)
+  }).then(async (resp) => {
+    if (resp.ok) {
+      return resp.json();
+    // } else if (resp.status === 401) {
+    } else {
+      throw new Error(resp.status);
+    }
+  });
+}
+
+function isExpired() {
+  return expires === 0 || Date.now() >= expires * 1000;
+}
+
+function updateExpires(token) {
+  try {
+    const infoCode = token.split('.')[1];
+    expires = JSON.parse(decode(infoCode)).exp;
+  } catch (err) {
+    throw new Error('invalid token');
+  }
 }
