@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { reactive } from 'vue';
+import { reactive, onMounted } from 'vue';
 import { get } from '../utils/service';
 import { router } from '../router';
 
@@ -33,6 +33,10 @@ export default {
           router.replace('/login');
         });
     }
+
+    onMounted(() => {
+      getUser()
+    });
     return {
       state,
       getUser,

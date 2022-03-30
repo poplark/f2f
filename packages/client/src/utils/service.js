@@ -60,6 +60,7 @@ export async function getToken(username, password) {
     access_token = data.accessToken;
     refresh_token = data.refreshToken;
     updateExpires(access_token);
+    saveToken();
   });
 }
 export async function refreshToken() {
@@ -77,7 +78,61 @@ export async function refreshToken() {
     access_token = data.accessToken;
     refresh_token = data.refreshToken;
     updateExpires(access_token);
+    saveToken();
   });
+}
+
+export function isLoginSync() {
+  if (!access_token || !refresh_token || !expires) {
+    loadToken();
+  }
+  if (!access_token || !refresh_token) {
+    return false;
+  }
+  return !isExpired();
+}
+
+export async function isLoginAsync() {
+  if (!access_token || !refresh_token || !expires) {
+    loadToken();
+  }
+  if (!access_token || !refresh_token) {
+    return false;
+  }
+  if (isExpired()) {
+    try {
+      await refreshToken();
+      return true;
+    } catch (err) {
+      access_token = '';
+      refresh_token = '';
+      expires = 0;
+      return false;
+    }
+  } else {
+    return true;
+  }
+}
+
+function loadToken() {
+  access_token = localStorage.getItem('access_token') || '';
+  refresh_token = localStorage.getItem('refresh_token') || '';
+  if (access_token) {
+    try {
+      updateExpires(access_token);
+    } catch (err) {
+      access_token = '';
+      refresh_token = '';
+    }
+  } else {
+    access_token = '';
+    refresh_token = '';
+  }
+}
+
+function saveToken() {
+  access_token && localStorage.setItem('access_token', access_token);
+  refresh_token && localStorage.setItem('refresh_token', refresh_token);
 }
 
 function request(method, ...args) {
