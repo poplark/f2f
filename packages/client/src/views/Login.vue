@@ -1,14 +1,23 @@
 <template>
-  <div>
-    <h1>Login</h1>
-
-    <div>
-      <input v-model="state.username" placeholder="用户名/手机号"/>
-      <input type="password" v-model="state.password" placeholder="密码"/>
-      <button @click="getToken">登录</button>
-      <button @click="refreshToken">RefreshToken</button>
-      <button @click="getUser">GetUser</button>
-    </div>
+  <div class="common-layout">
+    <el-container>
+      <el-header>Login</el-header>
+      <el-main>
+        <el-form :model="state" label-width="120px">
+          <el-form-item label="用户名/手机号">
+            <el-input v-model="state.username" placeholder="请输入用户名"/>
+          </el-form-item>
+          <el-form-item label="密码">
+            <el-input type="password" v-model="state.password" placeholder="请输入密码"/>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="onLogin">登录</el-button>
+            <el-button type="text" @click="onRegister">注册</el-button>
+          </el-form-item>
+          <p v-if="state.error">{{state.error}}</p>
+        </el-form>
+      </el-main>
+    </el-container>
   </div>
 </template>
 
@@ -26,7 +35,7 @@ export default {
       password: '',
     });
 
-    function _getToken() {
+    function onLogin() {
       const { username, password } = state;
 
       if (!username || !password) {
@@ -36,7 +45,7 @@ export default {
       const account = username;
       const passwd = encode(password);
 
-      console.log('_getToken:::: ', username, password, passwd);
+      console.log('onLogin:::: ', username, password, passwd);
 
       getToken(account, passwd)
         .then((data) => {
@@ -44,55 +53,16 @@ export default {
           router.replace('/');
         })
         .catch((err) => {
-          console.error('_getToken::: ', err);
+          state.error = err;
         });
     }
-    function _refreshToken() {
-      refreshToken()
-        .catch((err) => {
-          console.error('_refreshToken::: ', err);
-        });
-    }
-    function getUser() {
-      const { username } = state;
-
-      if (!username) {
-        return;
-      }
-      get(`/user?username=${username}`)
-        .then((data) => {
-          console.log('get user::: ', data);
-        })
-        .catch((err) => {
-          console.error('get user::: ', err);
-        });
-      get(`/user?username=${username}`)
-        .then((data) => {
-          console.log('get user222::: ', data);
-        })
-        .catch((err) => {
-          console.error('get user222::: ', err);
-        });
-      get(`/user?username=${username}`)
-        .then((data) => {
-          console.log('get user333::: ', data);
-        })
-        .catch((err) => {
-          console.error('get user333::: ', err);
-        });
-      get(`/user?username=${username}`)
-        .then((data) => {
-          console.log('get user444::: ', data);
-        })
-        .catch((err) => {
-          console.error('get user444::: ', err);
-        });
+    function onRegister() {
+      router.push({ name: 'register'});
     }
     return {
       state,
-      getToken: _getToken,
-      refreshToken: _refreshToken,
-      getUser,
+      onLogin,
+      onRegister,
     }
   },
 };

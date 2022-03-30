@@ -16,6 +16,7 @@
           <el-form-item>
             <el-button type="primary" @click="onRegister">注册</el-button>
             <el-button @click="onReset">重置</el-button>
+            <el-button type="text" @click="onLogin">跳回登录页</el-button>
           </el-form-item>
           <p v-if="state.error">{{state.error}}</p>
         </el-form>
@@ -37,7 +38,7 @@ export default {
       username: '',
       password: '',
       confirm_password: '',
-      error: '',
+      error: null,
     });
 
     function onRegister() {
@@ -70,10 +71,14 @@ export default {
       state.confirm_password = '';
       state.error = '';
     }
+    function onLogin() {
+      router.push({ name: 'login'});
+    }
     return {
       state,
       onRegister,
       onReset,
+      onLogin,
     }
   },
 };
