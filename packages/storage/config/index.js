@@ -1,7 +1,6 @@
 const path = require('path');
 
 const common = {
-  name: 'f2f',
   database: 'f2f',
   dialect: 'mysql',
   pool: {
