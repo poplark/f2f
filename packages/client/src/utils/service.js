@@ -34,7 +34,14 @@ export async function register(username, password) {
       username,
       password,
     }),
-  }).then((resp) => resp.json());
+  }).then(async (resp) => {
+    if (resp.ok) {
+      return resp.json();
+    } else {
+      const res = await resp.json();
+      throw new Error(res.zh);
+    }
+  });
 }
 export async function getToken(username, password) {
   return fetch('/api/token', {

@@ -1,13 +1,26 @@
 <template>
-  <div>
-    <h1>Register</h1>
-
-    <div>
-      <input v-model="state.username" placeholder="用户名/手机号"/>
-      <input type="password" v-model="state.password" placeholder="密码"/>
-      <input type="password" v-model="state.confirm_password" placeholder="确认密码"/>
-      <button @click="register">注册</button>
-    </div>
+  <div class="common-layout">
+    <el-container>
+      <el-header>Register</el-header>
+      <el-main>
+        <el-form :model="state" label-width="120px">
+          <el-form-item label="用户名/手机号">
+            <el-input v-model="state.username" placeholder="请输入用户名"/>
+          </el-form-item>
+          <el-form-item label="密码">
+            <el-input type="password" v-model="state.password" placeholder="请输入密码"/>
+          </el-form-item>
+          <el-form-item label="密码确认">
+            <el-input type="password" v-model="state.confirm_password" placeholder="请再次输入密码"/>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="onRegister">注册</el-button>
+            <el-button @click="onReset">重置</el-button>
+          </el-form-item>
+          <p v-if="state.error">{{state.error}}</p>
+        </el-form>
+      </el-main>
+    </el-container>
   </div>
 </template>
 
@@ -24,9 +37,10 @@ export default {
       username: '',
       password: '',
       confirm_password: '',
+      error: '',
     });
 
-    function register() {
+    function onRegister() {
       const { username, password, confirm_password } = state;
 
       if (!username || !password) {
@@ -47,13 +61,19 @@ export default {
           router.replace('/login');
         })
         .catch((err) => {
-          // todo - login failed tooltip
-          console.error('TODO - register failed', err);
+          state.error = err;
         });
+    }
+    function onReset() {
+      state.username = '';
+      state.password = '';
+      state.confirm_password = '';
+      state.error = '';
     }
     return {
       state,
-      register,
+      onRegister,
+      onReset,
     }
   },
 };

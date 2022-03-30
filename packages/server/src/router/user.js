@@ -51,8 +51,11 @@ module.exports = function(router) {
 
     let user = await findUserByUserName(ctx, username);
     if (user) {
-      ctx.status = 400;
-      ctx.body = `user ${username} is already exists`;
+      ctx.status = 409;
+      ctx.body = {
+        zh: `用户名 ${username} 已经存在`,
+        en: `Username ${username} is already exists`
+      };
       return;
     }
 
