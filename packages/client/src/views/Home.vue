@@ -14,8 +14,8 @@
           </span>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item>关于</el-dropdown-item>
-              <el-dropdown-item>个人资料</el-dropdown-item>
+              <el-dropdown-item @click="onProfile">个人资料</el-dropdown-item>
+              <el-dropdown-item @click="onAbout">关于</el-dropdown-item>
               <el-dropdown-item @click="onLogout">退出</el-dropdown-item>
             </el-dropdown-menu>
           </template>
@@ -40,19 +40,25 @@ export default {
     function getUser() {
       get('/user')
         .then((data) => {
-          console.log('TODO - home succeed', data);
           state.user = data;
         })
         .catch((err) => {
-          // todo - login failed tooltip
-          console.error('TODO - home failed', err);
+          console.warn('home failed', err);
           router.replace('/login');
         });
     }
 
+    function onProfile() {
+      router.push({name: 'profile'});
+    }
+
+    function onAbout() {
+      router.push({name: 'about'});
+    }
+
     function onLogout() {
       logout();
-      router.go({name: 'login'});
+      router.push({name: 'login'});
     }
 
     onMounted(() => {
@@ -60,7 +66,8 @@ export default {
     });
     return {
       state,
-      getUser,
+      onProfile,
+      onAbout,
       onLogout,
     }
   },

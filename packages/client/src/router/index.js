@@ -6,6 +6,16 @@ const routes = [
     path: '/',
     name: 'home',
     component: () => import('../views/Home.vue'),
+    beforeEnter(to, from) {
+      const _isLogin = isLoginSync();
+      if (!_isLogin) {
+        return '/login';
+      }
+    },
+  }, {
+    path: '/profile',
+    name: 'profile',
+    component: () => import('../views/Profile.vue'),
     beforeEnter() {
       const _isLogin = isLoginSync();
       if (!_isLogin) {
