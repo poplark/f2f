@@ -24,7 +24,7 @@
 <script>
 import { reactive } from 'vue';
 import { encode } from '../utils/password';
-import { get, getToken, refreshToken } from '../utils/service';
+import { getToken } from '../utils/service';
 import { router } from '../router';
 
 export default {
