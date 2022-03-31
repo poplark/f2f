@@ -114,6 +114,13 @@ export async function isLoginAsync() {
   }
 }
 
+export function logout() {
+  access_token = '';
+  refresh_token = '';
+  expires = 0;
+  clearToken();
+}
+
 function loadToken() {
   access_token = localStorage.getItem('access_token') || '';
   refresh_token = localStorage.getItem('refresh_token') || '';
@@ -133,6 +140,10 @@ function loadToken() {
 function saveToken() {
   access_token && localStorage.setItem('access_token', access_token);
   refresh_token && localStorage.setItem('refresh_token', refresh_token);
+}
+function clearToken() {
+  localStorage.removeItem('access_token');
+  localStorage.removeItem('refresh_token');
 }
 
 function request(method, ...args) {

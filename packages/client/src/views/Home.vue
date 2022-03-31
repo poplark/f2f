@@ -1,17 +1,33 @@
 <template>
-  <div>
-    <h1>Home</h1>
+  <div class="common-layout">
+    <el-container>
+      <el-header>
+        Home
 
-    <div>
-      {{ state.user }}
-      <button @click="getUser">Info</button>
-    </div>
+        <el-dropdown>
+          <span class="el-dropdown-link">
+            <span v-if="state.user">{{state.user.username}}</span>
+            <el-avatar shape="square" :size="50" src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png"/>
+            <el-icon class="el-icon--right">
+              <arrow-down />
+            </el-icon>
+          </span>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item>关于</el-dropdown-item>
+              <el-dropdown-item>个人资料</el-dropdown-item>
+              <el-dropdown-item @click="onLogout">退出</el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+      </el-header>
+    </el-container>
   </div>
 </template>
 
 <script>
 import { reactive, onMounted } from 'vue';
-import { get } from '../utils/service';
+import { get, logout } from '../utils/service';
 import { router } from '../router';
 
 export default {
@@ -34,12 +50,18 @@ export default {
         });
     }
 
+    function onLogout() {
+      logout();
+      router.go({name: 'login'});
+    }
+
     onMounted(() => {
       getUser()
     });
     return {
       state,
       getUser,
+      onLogout,
     }
   },
 };

@@ -4,10 +4,6 @@ import { isLoginSync, isLoginAsync } from '../utils/service';
 const routes = [
   {
     path: '/',
-    // todo 拦截器
-    redirect: '/home',
-  }, {
-    path: '/home',
     name: 'home',
     component: () => import('../views/Home.vue'),
     beforeEnter() {
