@@ -11,6 +11,7 @@
       <slot name="end"></slot>
       <el-dropdown>
         <el-avatar :size="30"> {{shortName}} </el-avatar>
+        <el-icon><caret-bottom /></el-icon>
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item @click="onProfile">个人资料</el-dropdown-item>
@@ -28,8 +29,12 @@
 import { reactive, onMounted } from 'vue';
 import { get, logout } from '../utils/service';
 import { router } from '../router';
+import { CaretBottom } from '@element-plus/icons-vue';
 
 export default {
+  components: {
+    'caret-bottom': CaretBottom,
+  },
   setup() {
     const user = reactive({
       avatar: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
