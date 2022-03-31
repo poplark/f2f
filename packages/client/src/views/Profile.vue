@@ -5,6 +5,7 @@
         Profile
       </el-header>
       <el-main>
+        <el-skeleton v-if="!state.user" :rows="5" animated />
         <el-form v-if="state.user" :model="state.user" label-width="120px">
           <el-form-item label="用户名">
             <el-input disabled v-model="state.user.username"/>
@@ -20,8 +21,10 @@
           <el-form-item label="角色">
             <el-input readonly v-model="state.user.role"/>
           </el-form-item>
+          <el-form-item>
+            <el-button @click="onHome">返回主页</el-button>
+          </el-form-item>
         </el-form>
-        <el-button @click="onHome">返回主页</el-button>
       </el-main>
     </el-container>
   </div>

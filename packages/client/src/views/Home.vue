@@ -7,7 +7,7 @@
         <el-dropdown>
           <span class="el-dropdown-link">
             <span v-if="state.user">{{state.user.username}}</span>
-            <el-avatar shape="square" :size="50" src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png"/>
+            <el-avatar v-loading="!state.user" shape="square" :size="50" src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png"/>
             <el-icon class="el-icon--right">
               <arrow-down />
             </el-icon>
