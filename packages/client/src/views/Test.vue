@@ -1,6 +1,10 @@
 <template>
   <div>
-    <h1>Login</h1>
+    <my-header>
+      <template v-slot:front>
+        <span class="header-front">Test</span>
+      </template>
+    </my-header>
 
     <div>
       <input v-model="state.username" placeholder="用户名/手机号"/>
@@ -19,7 +23,7 @@ import { get, getToken, refreshToken } from '../utils/service';
 import { router } from '../router';
 
 export default {
-  name: 'login',
+  name: 'test',
   setup() {
     const state = reactive({
       username: '',

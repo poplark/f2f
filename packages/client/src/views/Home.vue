@@ -13,13 +13,9 @@
 </template>
 
 <script>
-import Header from '../components/Header.vue';
 import { onMounted } from 'vue';
 
 export default {
-  components: {
-    'my-header': Header,
-  },
   name: 'home',
   setup() {
 

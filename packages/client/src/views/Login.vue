@@ -1,7 +1,12 @@
 <template>
-  <div class="common-layout">
+  <div>
+    <my-header>
+      <template v-slot:front>
+        <span class="header-front">Login</span>
+      </template>
+    </my-header>
     <el-container>
-      <el-header>Login</el-header>
+      <el-header></el-header>
       <el-main>
         <el-form :model="state" label-width="120px">
           <el-form-item label="用户名/手机号">

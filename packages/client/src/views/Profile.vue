@@ -1,8 +1,12 @@
 <template>
-  <div class="common-layout">
+  <div>
+    <my-header>
+      <template v-slot:front>
+        <span class="header-front">Profile</span>
+      </template>
+    </my-header>
     <el-container>
       <el-header>
-        Profile
       </el-header>
       <el-main>
         <el-skeleton v-if="!state.user" :rows="5" animated />
