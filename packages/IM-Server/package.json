@@ -25,5 +25,8 @@
   },
   "bugs": {
     "url": "https://github.com/poplark/f2f/issues"
+  },
+  "dependencies": {
+    "socket.io": "^4.4.1"
   }
 }
