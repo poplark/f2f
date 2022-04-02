@@ -27,6 +27,7 @@
     "url": "https://github.com/poplark/f2f/issues"
   },
   "dependencies": {
+    "@f2f/im-server": "^1.0.0",
     "@f2f/storage": "^1.0.0",
     "@koa/cors": "^3.2.0",
     "@koa/router": "^10.1.1",

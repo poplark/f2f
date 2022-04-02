@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^1.1.4",
+    "@f2f/im-client": "^1.0.0",
     "element-plus": "^2.1.4",
     "js-base64": "^3.7.2",
     "md5": "^2.3.0",

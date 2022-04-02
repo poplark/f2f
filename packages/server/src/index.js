@@ -1,12 +1,16 @@
+const { createServer } = require('http');
 const Koa = require('koa');
 const bodyParser = require('koa-bodyparser');
 const cors = require('@koa/cors');
 const jwt = require('koa-jwt');
 const orm = require('@f2f/storage');
+const im = require('@f2f/im-server');
 const { port, logger, jwtConfig } = require('../config');
 const router = require('./router');
 
 const app = new Koa();
+const server = createServer(app.callback());
+im(server);
 app.use(bodyParser());
 app.use(cors());
 app.use(jwt({ secret: jwtConfig.accessToken.keys.private }).unless({
@@ -30,6 +34,6 @@ app.use(orm());
 
 app.use(router.routes()).use(router.allowedMethods());
 
-app.listen(port, () => {
+server.listen(port, () => {
   logger.info(`应用已经启动，http://localhost:${port}`);
 });

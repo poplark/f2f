@@ -5,7 +5,7 @@
   "author": "poplark <songkang666@126.com>",
   "homepage": "https://github.com/poplark/f2f#readme",
   "license": "ISC",
-  "main": "lib/IM-Server.js",
+  "main": "src/index.js",
   "directories": {
     "lib": "lib",
     "test": "__tests__"
@@ -27,6 +27,7 @@
     "url": "https://github.com/poplark/f2f/issues"
   },
   "dependencies": {
-    "socket.io": "^4.4.1"
+    "socket.io": "^4.4.1",
+    "uuid": "^8.3.2"
   }
 }
