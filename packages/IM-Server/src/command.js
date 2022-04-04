@@ -1,3 +1,6 @@
+const { getUsers, joinRoom, leaveRoom } = require('./room');
+const { userOnline, userOffline } = require('./notification');
+
 const CMD = {
   join: 'join',
   leave: 'leave',
@@ -7,24 +10,23 @@ const CMD = {
   offMic: 'off-mic',
 }
 
-function join(io, socket, cmd) {
+function join(socket, cmd) {
   const { action, payload } = cmd;
-  const { roomId } = payload;
+  const { roomId, userId } = payload;
+  joinRoom(socket, roomId, userId);
   socket.join(roomId);
-  io.to(roomId).emit('command', {
-    action,
-    payload,
+  const users = getUsers(roomId, userId);
+  socket.emit(action, {
+    users,
   });
+  userOnline(socket, roomId, userId);
 }
 
 function leave(io, socket, cmd) {
-  const { action, payload } = cmd;
-  const { roomId } = payload;
-  socket.leave(roomId);
-  io.to(roomId).emit('command', {
-    action,
-    payload,
-  });
+  const { payload } = cmd;
+  const { roomId, userId } = payload;
+  leaveRoom(socket, roomId, userId);
+  userOffline(socket, roomId, userId);
 }
 
 module.exports = function(io, socket) {
@@ -32,10 +34,10 @@ module.exports = function(io, socket) {
     console.log('command:::: ', cmd);
     switch (cmd.action) {
       case CMD.join:
-        join(io, socket, cmd);
+        join(socket, cmd);
         break;
       case CMD.leave:
-        leave(io, socket, cmd);
+        leave(socket, cmd);
         break;
       case CMD.kickOut:
         break;

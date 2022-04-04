@@ -27,6 +27,7 @@ export class Command {
     this.to = to ? to : '@all';
   }
 
+  // todo - use toJSON
   getMessage() {
     return {
       action: this.action,

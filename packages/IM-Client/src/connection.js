@@ -27,6 +27,10 @@ export class Connection extends EventEmitter {
         console.log('command::: ', data);
         this.emit('command', data);
       });
+      this.socket.on('notification', (data) => {
+        console.log('notification::: ', data);
+        this.emit('notification', data);
+      });
     });
   }
 

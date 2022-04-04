@@ -18,15 +18,21 @@ export default defineConfig({
     // 设置代理
     proxy: {
       '/api': {
-        target: 'http://127.0.0.1:3001/api',
+        // target: 'http://127.0.0.1:3001/api',
+        // rewrite: path => path.replace(/^\/api/, '')
+        target: 'http://127.0.0.1:3001',
         changeOrigin: true,
-        rewrite: path => path.replace(/^\/api/, '')
       },
       '/init-test': {
-        target: 'http://127.0.0.1:3001/init-test',
+        // target: 'http://127.0.0.1:3001/init-test',
+        // rewrite: path => path.replace(/^\/init-test/, '')
+        target: 'http://127.0.0.1:3001',
         changeOrigin: true,
-        rewrite: path => path.replace(/^\/init-test/, '')
       },
+      '/socket.io': {
+        target: 'ws://127.0.0.1:3001',
+        ws: true,
+      }
     }
   },
   plugins: [vue()]
