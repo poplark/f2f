@@ -1,16 +1,11 @@
 import * as EventEmitter from 'events';
 import { io } from 'socket.io-client';
 
-class Connection extends EventEmitter {
+export class Connection extends EventEmitter {
   isConnected = false;
-  domain = ''
-  constructor(domain) {
-    super();
-    this.domain = domain;
-  }
-  async connect(room) {
+  async connect() {
     return new Promise((resolve, reject) => {
-      this.socket = io(`${domain}/${room}`);
+      this.socket = io();
       this.socket.on('connect', () => {
         this.isConnected = true;
         resolve();
@@ -22,28 +17,26 @@ class Connection extends EventEmitter {
       this.socket.on('disconnect', (reason) => {
         console.warn('connection::disconnect::', reason);
       });
-      this.socket.on('data', (data) => {
-        console.log('data::: ', data);
+      this.socket.on('message', (data) => {
+        console.log('message::: ', data);
         this.emit('message', data);
+      });
+      this.socket.on('command', (data) => {
+        console.log('command::: ', data);
+        this.emit('command', data);
       });
     });
   }
 
   sendMessage(msg) {
-    this.isConnected && this.socket.emit('message', msg);
+    this.isConnected && this.socket.emit('message', msg.getMessage());
   }
   sendCommand(cmd) {
-    this.isConnected && this.socket.emit('command', cmd);
-  }
-  sendRequest(req) {
-    this.isConnected && this.socket.emit('request', req);
+    console.log('getMessage:::: ', cmd.getMessage());
+    this.isConnected && this.socket.emit('command', cmd.getMessage());
   }
 
   disconnect() {
     this.isConnected && this.socket.disconnect();
   }
-}
-
-export {
-  Connection
 }
