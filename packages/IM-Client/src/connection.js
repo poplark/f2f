@@ -5,7 +5,9 @@ export class Connection extends EventEmitter {
   isConnected = false;
   async connect() {
     return new Promise((resolve, reject) => {
-      this.socket = io();
+      this.socket = io({
+        transports: ['websocket', 'polling'],
+      });
       this.socket.on('connect', () => {
         this.isConnected = true;
         resolve();
