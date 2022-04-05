@@ -9,10 +9,10 @@ class Client {
   // user
   // room
   // connection
-  constructor(username, token) {
+  constructor(userId, username, token) {
     // super();
     this.token = token;
-    this.user = new User(username);
+    this.user = new User(userId, username);
   }
   async join(roomId) {
     this.room = new Room(roomId);

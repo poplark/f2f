@@ -1,10 +1,12 @@
 export class Message {
   // type
+  // sequence
   // payload
   // from
   // to?
   constructor(type, payload, from, to) {
     this.type = type;
+    this.sequence = getSequence();
     this.payload = payload;
     this.from = from;
     this.to = to ? to : '@all';
@@ -12,7 +14,8 @@ export class Message {
 
   toJSON() {
     return {
-      action: this.action,
+      type: this.type,
+      sequence: this.sequence,
       payload: this.payload,
       from: this.from,
       to: this.to,
@@ -26,9 +29,10 @@ export class Message {
  * @param {*} fromUser
  * @returns
  */
-export function createTextMessage(roomId, fromUser) {
+export function createTextMessage(roomId, fromUser, content) {
   return new Message('text', {
     roomId,
     userId: fromUser.id,
+    content,
   }, fromUser.id);
 }

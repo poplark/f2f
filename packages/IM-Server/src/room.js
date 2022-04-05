@@ -1,4 +1,5 @@
 // todo - persistance store
+// todo - 记录 room version ， 用于消息乱序时的同步
 const rooms = new Map();
 
 function getUsers(roomId) {

@@ -10,45 +10,47 @@ const CMD = {
   offMic: 'off-mic',
 }
 
+function response(socket, cmd, payload) {
+  const { action, sequence } = cmd;
+  socket.emit('command', {
+    action,
+    sequence,
+    payload,
+  });
+}
+
 function join(socket, cmd) {
-  const { action, payload } = cmd;
-  const { roomId, userId } = payload;
+  const { payload } = cmd;
+  const { roomId, userId, username } = payload;
   socket.join(roomId);
   socket.data.roomId = roomId;
   socket.data.userId = userId;
+  socket.data.username = username;
 
   Room.join(socket, roomId, userId);
   Notification.join(socket, roomId, userId);
 
-  const users = Room.getUsers(roomId, userId);
-  socket.emit('command', {
-    action,
-    payload: { users },
+  response(socket, cmd, {
+    users: Room.getUsers(roomId, userId).filter(item => (item.userId !== userId))
   });
 }
 
 function leave(socket, cmd) {
-  const { action } = cmd;
-
   const { roomId, userId } = socket.data;
   Room.leave(socket, roomId, userId);
   Notification.leave(socket, roomId, userId);
 
-  socket.emit('command', {
-    action,
-    payload: {},
-  });
+  response(socket, cmd, {});
 
   // todo - 自行断开么？？
-  socket.disconnect();
+  // socket.disconnect();
 }
 
-function disconnect(io, socket) {
-  for (let room of socket.rooms) {
-    console.log('room::: ', room);
-    io.to(room).emit()
-    leaveRoom(socket, room, socket.data.userId)
-  }
+function disconnect(io, socket, reason) {
+  const { roomId, userId } = socket.data;
+
+  Room.leave(socket, roomId, userId);
+  Notification.disconnect(io, roomId, userId, reason);
 }
 
 module.exports = function(io, socket) {
@@ -74,7 +76,7 @@ module.exports = function(io, socket) {
         break;
     }
   });
-  socket.on('disconnect', () => {
-
-  })
+  socket.on('disconnect', (reason) => {
+    disconnect(io, socket, reason);
+  });
 }

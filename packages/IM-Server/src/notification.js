@@ -18,19 +18,6 @@ function createNotification(action, payload, from, to) {
 }
 
 /**
- * 特殊地，socket 断开时，由 io 广播到 roomId 房间
- * @param {*} roomId 
- * @param {*} userId 
- * @returns 
- */
-function disconnectNotification(roomId, userId) {
-  return createNotification(NIO.offline, {
-    roomId,
-    userId,
-  }, userId);
-}
-
-/**
  * 用户加入房间时，向其他用户广播其上线的消息
  * @param {*} socket 
  * @param {*} roomId 
@@ -56,6 +43,22 @@ function leave(socket, roomId, userId) {
     userId,
   }, userId);
   socket.broadcast.emit('notification', nio);
+}
+
+/**
+ * 特殊地，socket 断开时，由 io 广播到 roomId 房间
+ * @param {*} io 
+ * @param {*} roomId 
+ * @param {*} userId 
+ * @param {*} reason 
+ */
+function disconnect(io, roomId, userId, reason) {
+  const nio = createNotification(NIO.offline, {
+    roomId,
+    userId,
+    reason,
+  }, userId);
+  io.to(roomId).emit('notification', nio);
 }
 
 function ban(socket, roomId, adminUser, banUser) {
@@ -89,9 +92,9 @@ function offMic(socket, roomId, from, to) {
 }
 
 module.exports = {
-  disconnectNotification,
   join,
   leave,
+  disconnect,
   ban,
   onMic,
   offMic,

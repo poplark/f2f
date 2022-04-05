@@ -1,3 +1,5 @@
+import { getSequence } from './utils/sequence';
+
 const CMD = {
   join: 'join',
   leave: 'leave',
@@ -9,6 +11,7 @@ const CMD = {
 
 export class Command {
   // action
+  // sequence
   // payload
   // from
   // to?
@@ -22,6 +25,7 @@ export class Command {
    */
   constructor(action, payload, from, to) {
     this.action = action;
+    this.sequence = getSequence();
     this.payload = payload;
     this.from = from;
     this.to = to ? to : '@all';
@@ -31,6 +35,7 @@ export class Command {
   toJSON() {
     return {
       action: this.action,
+      sequence: this.sequence,
       payload: this.payload,
       from: this.from,
       to: this.to,
@@ -48,6 +53,7 @@ export function createJoinCommand(roomId, user) {
   return new Command(CMD.join, {
     roomId,
     userId: user.id,
+    username: user.username,
   }, user.id);
 }
 

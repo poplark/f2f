@@ -1,5 +1,5 @@
 import { Client } from './client';
 
-export function createInstance(username, token) {
-  return new Client(username, token);
+export function createInstance(userId, username, token) {
+  return new Client(userId, username, token);
 }
