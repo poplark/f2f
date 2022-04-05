@@ -28,7 +28,7 @@ export class Command {
   }
 
   // todo - use toJSON
-  getMessage() {
+  toJSON() {
     return {
       action: this.action,
       payload: this.payload,

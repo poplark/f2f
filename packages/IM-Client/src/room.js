@@ -1,10 +1,8 @@
 class Room {
   // id
-  name = ''
-  messages = []
-  users = []
-
-  async load() {
+  constructor(id) {
+    this.id = id;
+    this.users = [];
   }
 }
 

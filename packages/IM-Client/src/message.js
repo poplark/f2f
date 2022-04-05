@@ -10,7 +10,7 @@ export class Message {
     this.to = to ? to : '@all';
   }
 
-  getMessage() {
+  toJSON() {
     return {
       action: this.action,
       payload: this.payload,

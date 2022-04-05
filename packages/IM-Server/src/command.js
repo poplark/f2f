@@ -1,5 +1,5 @@
-const { getUsers, joinRoom, leaveRoom } = require('./room');
-const { userOnline, userOffline } = require('./notification');
+const Room = require('./room');
+const Notification = require('./notification');
 
 const CMD = {
   join: 'join',
@@ -13,20 +13,42 @@ const CMD = {
 function join(socket, cmd) {
   const { action, payload } = cmd;
   const { roomId, userId } = payload;
-  joinRoom(socket, roomId, userId);
   socket.join(roomId);
-  const users = getUsers(roomId, userId);
-  socket.emit(action, {
-    users,
+  socket.data.roomId = roomId;
+  socket.data.userId = userId;
+
+  Room.join(socket, roomId, userId);
+  Notification.join(socket, roomId, userId);
+
+  const users = Room.getUsers(roomId, userId);
+  socket.emit('command', {
+    action,
+    payload: { users },
   });
-  userOnline(socket, roomId, userId);
 }
 
-function leave(io, socket, cmd) {
-  const { payload } = cmd;
-  const { roomId, userId } = payload;
-  leaveRoom(socket, roomId, userId);
-  userOffline(socket, roomId, userId);
+function leave(socket, cmd) {
+  const { action } = cmd;
+
+  const { roomId, userId } = socket.data;
+  Room.leave(socket, roomId, userId);
+  Notification.leave(socket, roomId, userId);
+
+  socket.emit('command', {
+    action,
+    payload: {},
+  });
+
+  // todo - 自行断开么？？
+  socket.disconnect();
+}
+
+function disconnect(io, socket) {
+  for (let room of socket.rooms) {
+    console.log('room::: ', room);
+    io.to(room).emit()
+    leaveRoom(socket, room, socket.data.userId)
+  }
 }
 
 module.exports = function(io, socket) {
@@ -52,4 +74,7 @@ module.exports = function(io, socket) {
         break;
     }
   });
+  socket.on('disconnect', () => {
+
+  })
 }

@@ -35,11 +35,12 @@ export class Connection extends EventEmitter {
   }
 
   sendMessage(msg) {
-    this.isConnected && this.socket.emit('message', msg.getMessage());
+    console.log('sendMessage:::: ', msg.toJSON());
+    this.isConnected && this.socket.emit('message', msg);
   }
   sendCommand(cmd) {
-    console.log('getMessage:::: ', cmd.getMessage());
-    this.isConnected && this.socket.emit('command', cmd.getMessage());
+    console.log('sendCommand:::: ', cmd.toJSON());
+    this.isConnected && this.socket.emit('command', cmd);
   }
 
   disconnect() {

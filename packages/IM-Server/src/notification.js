@@ -30,7 +30,13 @@ function disconnectNotification(roomId, userId) {
   }, userId);
 }
 
-function userOnline(socket, roomId, userId) {
+/**
+ * 用户加入房间时，向其他用户广播其上线的消息
+ * @param {*} socket 
+ * @param {*} roomId 
+ * @param {*} userId 
+ */
+function join(socket, roomId, userId) {
   const nio = createNotification(NIO.online, {
     roomId,
     userId,
@@ -38,7 +44,13 @@ function userOnline(socket, roomId, userId) {
   socket.broadcast.emit('notification', nio);
 }
 
-function userOffline(socket, roomId, userId) {
+/**
+ * 用户离开房间时，向其他用户广播其下线的消息
+ * @param {*} socket 
+ * @param {*} roomId 
+ * @param {*} userId 
+ */
+function leave(socket, roomId, userId) {
   const nio = createNotification(NIO.offline, {
     roomId,
     userId,
@@ -78,8 +90,8 @@ function offMic(socket, roomId, from, to) {
 
 module.exports = {
   disconnectNotification,
-  userOnline,
-  userOffline,
+  join,
+  leave,
   ban,
   onMic,
   offMic,
