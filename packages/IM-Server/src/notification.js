@@ -1,4 +1,4 @@
-const { getSocketId } = require('./room');
+const { getSocket } = require('./room');
 
 const NIO = {
   online: 'online',
@@ -62,33 +62,33 @@ function disconnect(io, roomId, userId, reason) {
 }
 
 function ban(socket, roomId, adminUser, banUser) {
-  const toId = getSocketId(roomId, banUser);
-  if (!toId) return;
+  const toSocket = getSocket(roomId, banUser);
+  if (!toSocket) return;
   const nio = createNotification(NIO.ban, {
     roomId,
     userId: banUser,
   }, adminUser, banUser);
-  socket.to(toId).emit('notification', nio);
+  socket.to(banUser).emit('notification', nio);
 }
 
 function onMic(socket, roomId, from, to) {
-  const toId = getSocketId(roomId, to);
-  if (!toId) return;
+  const toSocket = getSocket(roomId, to);
+  if (!toSocket) return;
   const nio = createNotification(NIO.onMic, {
     roomId,
     userId: to,
   }, from, to);
-  socket.to(toId).emit('notification', nio);
+  socket.to(to).emit('notification', nio);
 }
 
 function offMic(socket, roomId, from, to) {
-  const toId = getSocketId(roomId, to);
-  if (!toId) return;
+  const toSocket = getSocket(roomId, to);
+  if (!toSocket) return;
   const nio = createNotification(NIO.offMic, {
     roomId,
     userId: to,
   }, from, to);
-  socket.to(toId).emit('notification', nio);
+  socket.to(to).emit('notification', nio);
 }
 
 module.exports = {

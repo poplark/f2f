@@ -3,6 +3,7 @@ import { Connection } from './connection';
 import { User } from './user';
 import { Room } from './room';
 import { createJoinCommand, createLeaveCommand } from './command';
+import { createTextMessage } from './message';
 
 class Client {
   // self
@@ -17,19 +18,22 @@ class Client {
   async join(roomId) {
     this.room = new Room(roomId);
     this.connection = new Connection();
+
     await this.connection.connect();
 
     const cmd = createJoinCommand(this.room.id, this.user);
-    this.connection.sendCommand(cmd);
+    return await this.connection.sendCommand(cmd);
   }
   async leave() {
     const cmd = createLeaveCommand(this.room.id, this.user);
-    this.connection.sendCommand(cmd);
-    // todo - disconnect after receive command
-    setTimeout(() => {
-      this.connection.disconnect();
-      this.connection = null;
-    }, 100);
+    await this.connection.sendCommand(cmd);
+    this.connection.disconnect();
+    this.connection = null;
+  }
+
+  async sendMessage(content) {
+    const msg = createTextMessage(content, this.user);
+    return await this.connection.sendMessage(msg);
   }
 }
 

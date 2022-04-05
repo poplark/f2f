@@ -1,12 +1,13 @@
 import { getSequence } from './utils/sequence';
 
-const CMD = {
+export const CMD = {
   join: 'join',
   leave: 'leave',
   kickOut: 'kick-out',
   askMic: 'ask-mic',
   onMic: 'on-mic',
   offMic: 'off-mic',
+  message: 'message',
 }
 
 export class Command {

@@ -1,25 +1,21 @@
-export class Message {
+import { CMD, Command } from "./command";
+
+const MSG_TYPE = {
+  text: 'text',
+  emoji: 'emoji',
+}
+
+export class Message extends Command {
   // type
   // sequence
   // payload
   // from
   // to?
-  constructor(type, payload, from, to) {
-    this.type = type;
-    this.sequence = getSequence();
-    this.payload = payload;
-    this.from = from;
-    this.to = to ? to : '@all';
-  }
-
-  toJSON() {
-    return {
-      type: this.type,
-      sequence: this.sequence,
-      payload: this.payload,
-      from: this.from,
-      to: this.to,
-    }
+  constructor(type, content, from, to) {
+    super(CMD.message, {
+      type,
+      content
+    }, from, to);
   }
 }
 
@@ -29,10 +25,6 @@ export class Message {
  * @param {*} fromUser
  * @returns
  */
-export function createTextMessage(roomId, fromUser, content) {
-  return new Message('text', {
-    roomId,
-    userId: fromUser.id,
-    content,
-  }, fromUser.id);
+export function createTextMessage(content, fromUser) {
+  return new Message(MSG_TYPE.text, content, fromUser.id);
 }

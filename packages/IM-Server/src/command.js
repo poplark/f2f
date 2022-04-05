@@ -1,5 +1,6 @@
 const Room = require('./room');
 const Notification = require('./notification');
+const Message = require('./message');
 
 const CMD = {
   join: 'join',
@@ -8,6 +9,7 @@ const CMD = {
   askMic: 'ask-mic',
   onMic: 'on-mic',
   offMic: 'off-mic',
+  message: 'message',
 }
 
 function response(socket, cmd, payload) {
@@ -53,6 +55,21 @@ function disconnect(io, socket, reason) {
   Notification.disconnect(io, roomId, userId, reason);
 }
 
+function message(socket, cmd) {
+  const { roomId, userId } = socket.data;
+  const { payload, to } = cmd;
+  const timestamp = Date.now();
+
+  Message.message(socket, roomId, {
+    ...payload,
+    timestamp,
+  }, userId, to);
+
+  response(socket, cmd, {
+    timestamp,
+  });
+}
+
 module.exports = function(io, socket) {
   socket.on('command', (cmd) => {
     console.log('command:::: ', cmd);
@@ -70,6 +87,9 @@ module.exports = function(io, socket) {
       case CMD.onMic:
         break;
       case CMD.offMic:
+        break;
+      case CMD.message:
+        message(socket, cmd);
         break;
       default:
         console.warn('unknown command:::: ', cmd);
