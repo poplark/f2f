@@ -65,7 +65,6 @@ export default {
     });
     return {
       state,
-      getUser,
       onHome,
     }
   },

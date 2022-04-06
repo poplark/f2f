@@ -7,22 +7,43 @@
     </my-header>
     <el-container>
       <el-header>
+        <room v-if="state.user" :user="state.user"/>
       </el-header>
     </el-container>
   </div>
 </template>
 
 <script>
-import { onMounted } from 'vue';
+import { reactive, onMounted } from 'vue';
+import { get } from '../utils/service';
+import Room from '../components/Chat/Room.vue';
 
 export default {
+  components: {
+    'room': Room,
+  },
   name: 'home',
   setup() {
+    const state = reactive({
+      user: null,
+    });
+
+    function getUser() {
+      get('/user')
+        .then((data) => {
+          state.user = data;
+        })
+        .catch((err) => {
+          console.warn('home::getUser:: ', err);
+        });
+    }
 
     onMounted(() => {
-      console.log('home mounted::');
+      getUser();
     });
-    return {}
+    return {
+      state
+    }
   },
 };
 </script>
