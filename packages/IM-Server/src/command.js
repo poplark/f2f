@@ -12,6 +12,12 @@ const CMD = {
   message: 'message',
 }
 
+/**
+ * CMD/MSG 的统一返回处理
+ * @param {*} socket 
+ * @param {*} cmd 
+ * @param {*} payload 
+ */
 function response(socket, cmd, payload) {
   const { action, sequence } = cmd;
   socket.emit('command', {
@@ -21,6 +27,11 @@ function response(socket, cmd, payload) {
   });
 }
 
+/**
+ * 加入房间命令
+ * @param {*} socket 
+ * @param {*} cmd 
+ */
 function join(socket, cmd) {
   const { payload } = cmd;
   const { roomId, userId, username } = payload;
@@ -37,6 +48,11 @@ function join(socket, cmd) {
   });
 }
 
+/**
+ * 离开房间命令
+ * @param {*} socket 
+ * @param {*} cmd 
+ */
 function leave(socket, cmd) {
   const { roomId, userId } = socket.data;
   Room.leave(socket, roomId, userId);
@@ -48,6 +64,12 @@ function leave(socket, cmd) {
   // socket.disconnect();
 }
 
+/**
+ * 异常断线处理
+ * @param {*} io 
+ * @param {*} socket 
+ * @param {*} reason 
+ */
 function disconnect(io, socket, reason) {
   const { roomId, userId } = socket.data;
 
@@ -55,6 +77,32 @@ function disconnect(io, socket, reason) {
   Notification.disconnect(io, roomId, userId, reason);
 }
 
+/**
+ * 踢除用户
+ * @param {*} socket 
+ * @param {*} cmd 
+ */
+function kickOut(socket, cmd) {
+  const { roomId, userId } = socket.data;
+  const { payload} = cmd;
+  const { userId: kUserId } = payload;
+
+  let res = { roomId };
+  try {
+    Notification.kickOut(socket, roomId, userId, kUserId);
+    res.userId = kUserId;
+  } catch (err) {
+    console.warn('command::kickOut::', err);
+  }
+  Room.kickOut(roomId, kUserId);
+  response(socket, cmd, res);
+}
+
+/**
+ * 消息处理
+ * @param {*} socket 
+ * @param {*} cmd 
+ */
 function message(socket, cmd) {
   const { roomId, userId } = socket.data;
   const { payload, to } = cmd;
@@ -81,6 +129,7 @@ module.exports = function(io, socket) {
         leave(socket, cmd);
         break;
       case CMD.kickOut:
+        kickOut(socket, cmd);
         break;
       case CMD.askMic:
         break;

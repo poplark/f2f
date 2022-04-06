@@ -59,9 +59,27 @@ function leave(socket, roomId, userId) {
   }
 }
 
+/**
+ * 踢除用户
+ * @param {*} roomId - 房间号
+ * @param {*} userId - 被踢用户
+ */
+function kickOut(roomId, userId) {
+  if (rooms.has(roomId)) {
+    const socketMap = rooms.get(roomId);
+    if (socketMap.has(userId)) {
+      socketMap.delete(userId);
+    }
+    if (socketMap.size === 0) {
+      rooms.delete(roomId);
+    }
+  }
+}
+
 module.exports = {
   getUsers,
   getSocket,
   join,
   leave,
+  kickOut,
 }
