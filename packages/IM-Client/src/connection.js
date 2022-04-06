@@ -18,15 +18,25 @@ export class Connection extends EventEmitter {
         transports: ['websocket', 'polling'],
       });
       this.socket.on('connect', () => {
-        this.isConnected = true;
-        resolve();
+        console.log('connect::: ');
+        if (this.isConnected) {
+          this.emit('reconnected');
+        } else {
+          this.isConnected = true;
+          resolve();
+        }
       });
       this.socket.on('connect_error', (err) => {
         console.warn('connection::connect::failed::', err);
         reject(err);
       });
       this.socket.on('disconnect', (reason) => {
-        console.warn('connection::disconnect::', reason);
+        if (this.isConnected) {
+          this.emit('reconnecting');
+        } else {
+          console.warn('connection::disconnect::', reason);
+        }
+        this.clearSendReceives();
       });
       this.socket.on('command', (res) => {
         // todo - res status code
@@ -56,6 +66,9 @@ export class Connection extends EventEmitter {
    * @param {*} cmd 
    * @returns 
    */
+  // todo - log, validate
+  // @log
+  // @validate
   sendCommand(cmd) {
     return new Promise((resolve, reject) => {
       if (this.isConnected) {
@@ -93,16 +106,24 @@ export class Connection extends EventEmitter {
   }
 
   /**
-   * 断开连接
+   * private - 清空发送的
    */
-  disconnect() {
-    this.isConnected && this.socket.disconnect();
-    this.isConnected = false;
-    this.socket = null;
+  clearSendReceives() {
     for (let [_, item] of this.sendReceives) {
       const [_1, _2, reject] = item;
       reject(new Error('Connection is disconnected'));
     }
     this.sendReceives.clear();
+  }
+
+  /**
+   * 断开连接
+   */
+  disconnect() {
+    if (this.isConnected) {
+      this.isConnected = false;
+      this.socket.disconnect();
+    }
+    this.socket = null;
   }
 }

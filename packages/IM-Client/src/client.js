@@ -20,6 +20,19 @@ class Client {
     this.token = token;
     this.user = new User(userId, username);
     this.connection = new Connection();
+    this.connection.on('reconnecting', () => {
+      console.log('connection::reconnecting::: ');
+    });
+    this.connection.on('reconnected', () => {
+      console.log('connection::reconnected::: ');
+      // todo - rejoin
+    });
+    this.connection.on('message', (msg) => {
+      console.log('connection::message::: ', msg);
+    });
+    this.connection.on('notification', (nio) => {
+      console.log('connection::notification::: ', nio);
+    });
   }
 
   /**
