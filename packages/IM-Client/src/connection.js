@@ -50,9 +50,18 @@ export class Connection extends EventEmitter {
           console.warn(`Receive unknown command response`);
         }
       });
-      this.socket.on('message', (data) => {
-        console.log('message::: ', data);
-        this.emit('message', data);
+      this.socket.on('message', (msg) => {
+        /**
+         * {
+         *  content: "hello f2f",
+         *  timestamp: 1649233837821,
+         *  type: "text",
+         *  userId: 10,
+         *  username: "一棵小白杨"
+         * }
+         */
+        const { payload } = msg;
+        this.emit('message', payload);
       });
       this.socket.on('notification', (data) => {
         console.log('notification::: ', data);

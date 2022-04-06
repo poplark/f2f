@@ -104,12 +104,14 @@ function kickOut(socket, cmd) {
  * @param {*} cmd 
  */
 function message(socket, cmd) {
-  const { roomId, userId } = socket.data;
+  const { roomId, userId, username } = socket.data;
   const { payload, to } = cmd;
   const timestamp = Date.now();
 
   Message.message(socket, roomId, {
     ...payload,
+    userId,
+    username,
     timestamp,
   }, userId, to);
 

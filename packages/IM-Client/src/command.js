@@ -60,37 +60,32 @@ export function createJoinCommand(roomId, user) {
 
 /**
  * 离开房间
- * @param {*} roomId 
  * @param {*} user 
  * @returns 
  */
-export function createLeaveCommand(roomId, user) {
+export function createLeaveCommand(user) {
   return new Command(CMD.leave, {
-    roomId,
     userId: user.id,
   }, user.id);
 }
 
 /**
  * 踢出用户
- * @param {*} roomId 
+ * @param {*} outUser - 被踢用户
  * @param {*} adminUser 
- * @param {*} outUser 
  * @returns 
  */
-export function createKickOutCommand(roomId, adminUser, outUser) {
+export function createKickOutCommand(outUser, adminUser) {
   return new Command(CMD.kickOut, {
-    roomId,
     userId: outUser.id,
   }, adminUser.id, outUser.id);
 }
 
 /**
  * 请求上麦
- * @param {*} roomId 
  * @param {*} user 
  */
-export function createAskMicCommand(roomId, user) {
+export function createAskMicCommand(user) {
   return new Command(CMD.askMic, {
     roomId,
     userId: user.id,
@@ -99,12 +94,11 @@ export function createAskMicCommand(roomId, user) {
 
 /**
  * 允许上麦
- * @param {*} roomId 
  * @param {*} adminUser 
  * @param {*} onMicUser 
  * @returns 
  */
-export function createOnMicCommand(roomId, adminUser, onMicUser) {
+export function createOnMicCommand(adminUser, onMicUser) {
   return new Command(CMD.onMic, {
     roomId,
     userId: onMicUser.id,
@@ -113,14 +107,31 @@ export function createOnMicCommand(roomId, adminUser, onMicUser) {
 
 /**
  * 强制下麦
- * @param {*} roomId 
  * @param {*} adminUser 
  * @param {*} offMicUser 
  * @returns 
  */
-export function createOffMicCommand(roomId, adminUser, offMicUser) {
+export function createOffMicCommand(adminUser, offMicUser) {
   return new Command(CMD.offMic, {
     roomId,
     userId: offMicUser.id,
   }, adminUser.id, offMicUser.id);
+}
+
+const MSG_TYPE = {
+  text: 'text',
+  emoji: 'emoji',
+}
+
+/**
+ * 文本消息
+ * @param {*} content 
+ * @param {*} fromUser 
+ * @returns 
+ */
+export function createTextMessage(content, fromUser) {
+  return new Command(CMD.message, {
+    type: MSG_TYPE.text,
+    content,
+  }, fromUser.id);
 }

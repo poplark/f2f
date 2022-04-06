@@ -1,30 +1,15 @@
-import { CMD, Command } from "./command";
-
-const MSG_TYPE = {
-  text: 'text',
-  emoji: 'emoji',
-}
-
-export class Message extends Command {
+export class Message {
   // type
   // sequence
   // payload
   // from
   // to?
-  constructor(type, content, from, to) {
-    super(CMD.message, {
-      type,
-      content
-    }, from, to);
+  constructor(payload) {
+    const { type, content, userId, username, timestamp } = payload;
+    this.type = type;
+    this.content = content;
+    this.userId = userId;
+    this.username = username;
+    this.timestamp = timestamp;
   }
-}
-
-/**
- * 向房间发消息
- * @param {*} roomId
- * @param {*} fromUser
- * @returns
- */
-export function createTextMessage(content, fromUser) {
-  return new Message(MSG_TYPE.text, content, fromUser.id);
 }
