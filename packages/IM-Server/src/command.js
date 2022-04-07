@@ -70,11 +70,11 @@ function leave(socket, cmd) {
  * @param {*} socket 
  * @param {*} reason 
  */
-function disconnect(io, socket, reason) {
+function disconnect(socket, reason) {
   const { roomId, userId } = socket.data;
 
   Room.leave(socket, roomId, userId);
-  Notification.disconnect(io, roomId, userId, reason);
+  Notification.disconnect(socket, roomId, userId, reason);
 }
 
 /**
@@ -148,6 +148,6 @@ module.exports = function(io, socket) {
     }
   });
   socket.on('disconnect', (reason) => {
-    disconnect(io, socket, reason);
+    disconnect(socket, reason);
   });
 }

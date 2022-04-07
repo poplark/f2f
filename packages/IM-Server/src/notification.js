@@ -60,13 +60,13 @@ function leave(socket, roomId, userId) {
  * @param {*} userId 
  * @param {*} reason 
  */
-function disconnect(io, roomId, userId, reason) {
+function disconnect(socket, roomId, userId, reason) {
   const nio = createNotification(NIO.offline, {
     roomId,
     userId,
     reason,
   }, userId);
-  io.to(roomId).emit('notification', nio);
+  socket.to(roomId).emit('notification', nio);
 }
 
 /**
