@@ -74,7 +74,7 @@ function disconnect(socket, reason) {
   const { roomId, userId } = socket.data;
 
   Room.leave(socket, roomId, userId);
-  Notification.disconnect(socket, roomId, userId, reason);
+  Notification.leave(socket, roomId, userId, reason);
 }
 
 /**

@@ -40,33 +40,19 @@ function join(socket, roomId, userId) {
 }
 
 /**
- * 用户离开房间时，向其他用户广播其下线的消息
+ * 用户离开房间或异常断线时，向其他用户广播其下线的消息
  * @param {*} socket 
- * @param {*} roomId 
- * @param {*} userId 
- */
-function leave(socket, roomId, userId) {
-  const nio = createNotification(NIO.offline, {
-    roomId,
-    userId,
-  }, userId);
-  socket.broadcast.emit('notification', nio);
-}
-
-/**
- * 特殊地，socket 断开时，由 io 广播到 roomId 房间
- * @param {*} io 
  * @param {*} roomId 
  * @param {*} userId 
  * @param {*} reason 
  */
-function disconnect(socket, roomId, userId, reason) {
+function leave(socket, roomId, userId, reason) {
   const nio = createNotification(NIO.offline, {
     roomId,
     userId,
-    reason,
+    reason: reason ? reason : 'leave'
   }, userId);
-  socket.to(roomId).emit('notification', nio);
+  socket.broadcast.emit('notification', nio);
 }
 
 /**
@@ -126,7 +112,6 @@ function offMic(socket, roomId, from, to) {
 module.exports = {
   join,
   leave,
-  disconnect,
   kickOut,
   onMic,
   offMic,
