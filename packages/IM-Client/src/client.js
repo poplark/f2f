@@ -2,14 +2,14 @@ import * as EventEmitter from 'events';
 import { Connection } from './connection';
 import { User } from './user';
 import { Room } from './room';
-import { Message } from './message';
+import { Message, messageHandler } from './message';
 import {
   createJoinCommand,
   createLeaveCommand,
   createKickOutCommand,
   createTextMessage,
 } from './command';
-import { notificationHandler } from './notification';
+import { rejoinHandler, onlineHandler, notificationHandler } from './notification';
 
 class Client extends EventEmitter {
   // token
@@ -23,18 +23,28 @@ class Client extends EventEmitter {
     this.user = new User(userId, username);
     this.connection = new Connection();
     this.connection.on('reconnecting', () => {
-      console.log('connection::reconnecting::: ');
+      this.emit('reconnecting');
     });
     this.connection.on('reconnected', () => {
       console.log('connection::reconnected::: ');
-      // todo - rejoin
+      // todo - rejoin failed?? try again???
+      this.rejoin()
+        .then(() => {
+          this.emit('reconnected');
+        })
+        .catch((err) => {
+          this.emit('reconnect-failed');
+        });
     });
-    this.connection.on('message', (payload) => {
-      console.log('connection::message::: ', payload);
-        const message = new Message(payload);
-        this.room.pushMessage(message);
-    });
+    this.connection.on('message', messageHandler.bind(this));
     this.connection.on('notification', notificationHandler.bind(this));
+  }
+
+  async rejoin() {
+    const cmd = createJoinCommand(this.room.id, this.user);
+    const payload = await this.connection.sendCommand(cmd);
+    const { users } = payload;
+    rejoinHandler.call(this, users);
   }
 
   /**
@@ -43,17 +53,14 @@ class Client extends EventEmitter {
    * @returns 
    */
   async join(roomId) {
-    this.room = new Room(roomId);
     await this.connection.connect();
+    this.room = new Room(roomId);
     const cmd = createJoinCommand(this.room.id, this.user);
     const payload = await this.connection.sendCommand(cmd);
     const { users } = payload;
     const res = [];
     users.forEach((item) => {
-      const onlineUser = new User(item.userId, item.username);
-      res.push(onlineUser);
-      this.room.addUser(onlineUser);
-      this.emit('user-online', onlineUser);
+      res.push(onlineHandler.call(this, item.userId, item.username));
     });
     return res;
   }
@@ -77,9 +84,9 @@ class Client extends EventEmitter {
   async sendMessage(content) {
     const msg = createTextMessage(content, this.user);
     const payload = await this.connection.sendMessage(msg);
+    messageHandler.call(this, payload);
     const message = new Message(payload);
     this.room.pushMessage(message);
-    return message;
   }
 
   /**

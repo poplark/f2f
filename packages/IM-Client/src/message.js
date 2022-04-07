@@ -13,3 +13,9 @@ export class Message {
     this.timestamp = timestamp;
   }
 }
+
+export function messageHandler(payload) {
+  const message = new Message(payload);
+  this.room.pushMessage(message);
+  this.emit('message', message);
+}
