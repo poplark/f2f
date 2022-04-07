@@ -12,10 +12,12 @@ class Room {
     this.users.push(user);
   }
   removeUser(userId) {
+    let res;
     const idx = this.users.findIndex((user) => user.id === userId);
     if (idx >= 0) {
-      this.users.splice(idx, 1);
+      [ res ] = this.users.splice(idx, 1);
     }
+    return res;
   }
 
   pushMessage(msg) {

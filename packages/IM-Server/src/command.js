@@ -41,7 +41,7 @@ function join(socket, cmd) {
   socket.data.username = username;
 
   Room.join(socket, roomId, userId);
-  Notification.join(socket, roomId, userId);
+  Notification.join(socket, roomId, userId, username);
 
   response(socket, cmd, {
     users: Room.getUsers(roomId, userId).filter(item => (item.userId !== userId))
@@ -116,6 +116,9 @@ function message(socket, cmd) {
   }, userId, to);
 
   response(socket, cmd, {
+    ...payload,
+    userId,
+    username,
     timestamp,
   });
 }

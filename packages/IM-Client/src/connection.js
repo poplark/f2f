@@ -63,9 +63,9 @@ export class Connection extends EventEmitter {
         const { payload } = msg;
         this.emit('message', payload);
       });
-      this.socket.on('notification', (data) => {
-        console.log('notification::: ', data);
-        this.emit('notification', data);
+      this.socket.on('notification', (nio) => {
+        console.log('notification::: ', nio);
+        this.emit('notification', nio);
       });
     });
   }

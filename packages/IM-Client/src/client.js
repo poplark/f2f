@@ -9,15 +9,16 @@ import {
   createKickOutCommand,
   createTextMessage,
 } from './command';
+import { notificationHandler } from './notification';
 
-class Client {
+class Client extends EventEmitter {
   // token
   // user
   // connection
   // room
   // todo - token
   constructor(userId, username, token) {
-    // super();
+    super();
     this.token = token;
     this.user = new User(userId, username);
     this.connection = new Connection();
@@ -33,9 +34,7 @@ class Client {
         const message = new Message(payload);
         this.room.pushMessage(message);
     });
-    this.connection.on('notification', (nio) => {
-      console.log('connection::notification::: ', nio);
-    });
+    this.connection.on('notification', notificationHandler.bind(this));
   }
 
   /**
@@ -47,7 +46,16 @@ class Client {
     this.room = new Room(roomId);
     await this.connection.connect();
     const cmd = createJoinCommand(this.room.id, this.user);
-    return await this.connection.sendCommand(cmd);
+    const payload = await this.connection.sendCommand(cmd);
+    const { users } = payload;
+    const res = [];
+    users.forEach((item) => {
+      const onlineUser = new User(item.userId, item.username);
+      res.push(onlineUser);
+      this.room.addUser(onlineUser);
+      this.emit('user-online', onlineUser);
+    });
+    return res;
   }
 
   /**
@@ -58,6 +66,7 @@ class Client {
     await this.connection.sendCommand(cmd);
     this.connection.disconnect();
     this.connection = null;
+    this.room = null;
   }
 
   /**
@@ -66,9 +75,11 @@ class Client {
    * @returns 
    */
   async sendMessage(content) {
-    console.log('client::sendMessage::', content);
     const msg = createTextMessage(content, this.user);
-    return await this.connection.sendMessage(msg);
+    const payload = await this.connection.sendMessage(msg);
+    const message = new Message(payload);
+    this.room.pushMessage(message);
+    return message;
   }
 
   /**

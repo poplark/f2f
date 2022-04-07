@@ -31,10 +31,11 @@ function createNotification(action, payload, from, to) {
  * @param {*} roomId 
  * @param {*} userId 
  */
-function join(socket, roomId, userId) {
+function join(socket, roomId, userId, username) {
   const nio = createNotification(NIO.online, {
     roomId,
     userId,
+    username,
   }, userId);
   socket.broadcast.emit('notification', nio);
 }
