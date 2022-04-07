@@ -85,8 +85,6 @@ class Client extends EventEmitter {
     const msg = createTextMessage(content, this.user);
     const payload = await this.connection.sendMessage(msg);
     messageHandler.call(this, payload);
-    const message = new Message(payload);
-    this.room.pushMessage(message);
   }
 
   /**
