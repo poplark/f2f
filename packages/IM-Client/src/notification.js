@@ -38,9 +38,16 @@ export function rejoinHandler(newUsers) {
 
 export function onlineHandler(id, username) {
   const user = new User(id, username);
-  this.room.addUser(user);
-  this.emit('user-online', user);
-  return user;
+  if (this.room.addUser(user)) {
+    this.emit('user-online', user);
+  }
+}
+
+function offlineHandler(id) {
+  const user = this.room.removeUser(id);
+  if (user) {
+    this.emit('user-offline', user);
+  }
 }
 
 /**
@@ -63,7 +70,7 @@ export function notificationHandler(nio) {
       onlineHandler.call(this, payload.userId, payload.username);
       break;
     case NIO.offline:
-      this.emit('user-offline', this.room.removeUser(payload.userId));
+      offlineHandler.call(this, payload.userId);
       break;
     case NIO.ban:
       this.connection.disconnect();

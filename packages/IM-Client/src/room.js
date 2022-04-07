@@ -9,7 +9,13 @@ class Room {
   }
 
   addUser(user) {
-    this.users.push(user);
+    const idx = this.users.findIndex((user) => user.id === userId);
+    if (idx >= 0) {
+      return false;
+    } else {
+      this.users.push(user);
+    }
+    return true;
   }
   removeUser(userId) {
     let res;
@@ -38,6 +44,7 @@ class Room {
     }
   }
 }
+
 
 export {
   Room
