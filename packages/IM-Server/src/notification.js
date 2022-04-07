@@ -69,9 +69,22 @@ function kickOut(socket, roomId, adminUser, banUser) {
   if (!toSocket) throw new Error('Can not find socket');
   const nio = createNotification(NIO.ban, {
     roomId,
-    userId: banUser,
+    userId: adminUser,
   }, adminUser, banUser);
   socket.to(toSocket.id).emit('notification', nio);
+}
+
+/**
+ * 异地登录被踢时广播前次连接离线的消息
+ * @param {*} socket 
+ */
+function leave4KickOut(socket, oldSocket, roomId, userId) {
+  const nio = createNotification(NIO.offline, {
+    roomId,
+    userId,
+    reason: 'kick out'
+  }, userId);
+  socket.broadcast.except(oldSocket.id).emit('notification', nio);
 }
 
 /**
@@ -114,6 +127,7 @@ module.exports = {
   join,
   leave,
   kickOut,
+  leave4KickOut,
   onMic,
   offMic,
 }

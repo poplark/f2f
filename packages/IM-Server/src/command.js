@@ -40,6 +40,12 @@ function join(socket, cmd) {
   socket.data.userId = userId;
   socket.data.username = username;
 
+  const oldSocket = Room.getSocket(roomId, userId);
+  if (oldSocket) {
+    Notification.kickOut(socket, roomId, userId, userId);
+    Notification.leave4KickOut(socket, oldSocket, roomId, userId);
+    Room.leave(socket, roomId, userId);
+  }
   Room.join(socket, roomId, userId);
   Notification.join(socket, roomId, userId, username);
 
@@ -73,8 +79,11 @@ function leave(socket, cmd) {
 function disconnect(socket, reason) {
   const { roomId, userId } = socket.data;
 
-  Room.leave(socket, roomId, userId);
-  Notification.leave(socket, roomId, userId, reason);
+  const _socket = Room.getSocket(roomId, userId);
+  if (socket === _socket) {
+    Room.leave(socket, roomId, userId);
+    Notification.leave(socket, roomId, userId, reason);
+  }
 }
 
 /**

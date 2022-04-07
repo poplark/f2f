@@ -35,11 +35,7 @@ function join(socket, roomId, userId) {
   let socketMap;
   if (rooms.has(roomId)) {
     socketMap = rooms.get(roomId);
-    if (socketMap.has(userId)) {
-      // todo - kick-out old socketId
-    } else {
-      socketMap.set(userId, socket);
-    }
+    socketMap.set(userId, socket);
   } else {
     socketMap = new Map();
     socketMap.set(userId, socket);
