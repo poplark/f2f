@@ -44,7 +44,7 @@ function join(socket, cmd) {
   if (oldSocket) {
     Notification.kickOut(socket, roomId, userId, userId);
     Notification.leave4KickOut(socket, oldSocket, roomId, userId);
-    Room.leave(socket, roomId, userId);
+    Room.leave(roomId, userId);
   }
   Room.join(socket, roomId, userId);
   Notification.join(socket, roomId, userId, username);
@@ -61,7 +61,7 @@ function join(socket, cmd) {
  */
 function leave(socket, cmd) {
   const { roomId, userId } = socket.data;
-  Room.leave(socket, roomId, userId);
+  Room.leave(roomId, userId);
   Notification.leave(socket, roomId, userId);
 
   response(socket, cmd, {});
@@ -81,7 +81,7 @@ function disconnect(socket, reason) {
 
   const _socket = Room.getSocket(roomId, userId);
   if (socket === _socket) {
-    Room.leave(socket, roomId, userId);
+    Room.leave(roomId, userId);
     Notification.leave(socket, roomId, userId, reason);
   }
 }
@@ -92,19 +92,19 @@ function disconnect(socket, reason) {
  * @param {*} cmd 
  */
 function kickOut(socket, cmd) {
-  const { roomId, userId } = socket.data;
-  const { payload} = cmd;
-  const { userId: kUserId } = payload;
+  const { roomId, userId: adminUser } = socket.data;
+  const { payload } = cmd;
+  const { userId: banUser } = payload;
 
-  let res = { roomId };
-  try {
-    Notification.kickOut(socket, roomId, userId, kUserId);
-    res.userId = kUserId;
-  } catch (err) {
-    console.warn('command::kickOut::', err);
+  const toSocket = Room.getSocket(roomId, banUser);
+  if (toSocket) {
+    response(socket, cmd, { roomId, userId: banUser });
+    Notification.kickOut(socket, roomId, adminUser, banUser);
+    Notification.leave(toSocket, roomId, banUser, 'kick out');
+    Room.leave(roomId, banUser);
+  } else {
+    response(socket, cmd, { err: 'not online' });
   }
-  Room.kickOut(roomId, kUserId);
-  response(socket, cmd, res);
 }
 
 /**

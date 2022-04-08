@@ -43,24 +43,12 @@ function join(socket, roomId, userId) {
   }
 }
 
-function leave(socket, roomId, userId) {
-  if (rooms.has(roomId)) {
-    const socketMap = rooms.get(roomId);
-    if (socketMap.has(userId)) {
-      socketMap.delete(userId);
-    }
-    if (socketMap.size === 0) {
-      rooms.delete(roomId);
-    }
-  }
-}
-
 /**
- * 踢除用户
- * @param {*} roomId - 房间号
- * @param {*} userId - 被踢用户
+ * 用户离开 - 自行离开或被踢离开
+ * @param {*} roomId 
+ * @param {*} userId 
  */
-function kickOut(roomId, userId) {
+function leave(roomId, userId) {
   if (rooms.has(roomId)) {
     const socketMap = rooms.get(roomId);
     if (socketMap.has(userId)) {
@@ -77,5 +65,4 @@ module.exports = {
   getSocket,
   join,
   leave,
-  kickOut,
 }
