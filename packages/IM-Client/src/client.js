@@ -2,7 +2,7 @@ import * as EventEmitter from 'events';
 import { Connection } from './connection';
 import { User } from './user';
 import { Room } from './room';
-import { Message, messageHandler } from './message';
+import { messageHandler } from './message';
 import {
   createJoinCommand,
   createLeaveCommand,
@@ -95,6 +95,17 @@ class Client extends EventEmitter {
   async kickOut(user) {
     const cmd = createKickOutCommand(user, this.user);
     return await this.connection.sendCommand(cmd);
+  }
+
+  /**
+   * on - user-online | user-offline | ban | message
+   */
+  get users() {
+    return this.room ? this.room.users : [];
+  }
+
+  get messages() {
+    return this.room ? this.room.messages : [];
   }
 }
 

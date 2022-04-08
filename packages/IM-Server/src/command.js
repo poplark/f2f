@@ -20,7 +20,7 @@ const CMD = {
  */
 function response(socket, cmd, payload) {
   const { action, sequence } = cmd;
-  socket.emit('command', {
+  socket.emit('ack', {
     action,
     sequence,
     payload,

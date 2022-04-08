@@ -45,7 +45,6 @@ class Room {
   }
 }
 
-
 export {
   Room
 }

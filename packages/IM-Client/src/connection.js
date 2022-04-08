@@ -38,7 +38,7 @@ export class Connection extends EventEmitter {
         }
         this.clearSendReceives();
       });
-      this.socket.on('command', (res) => {
+      this.socket.on('ack', (res) => {
         // todo - res status code
         const { sequence, payload } = res;
         if (this.sendReceives.has(sequence)) {
