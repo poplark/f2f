@@ -9,7 +9,7 @@ class Room {
   }
 
   addUser(user) {
-    const idx = this.users.findIndex((user) => user.id === userId);
+    const idx = this.users.findIndex((item) => item.id === user.id);
     if (idx >= 0) {
       return false;
     } else {
