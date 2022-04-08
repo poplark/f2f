@@ -1,26 +1,28 @@
 <template>
-<div class="chat-room">
-  <div v-if="state.chat">
-    <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleSwitchTab">
-      <el-tab-pane label="用户列表" name="first">
-        <div @click="onChooseUser(user)" v-for="user in state.chat.users" :key="user.id">
-          {{user.username}}
+<div>
+  <el-tabs v-if="state.chat" type="border-card" v-model="activeName" class="chat-room" @tab-click="handleSwitchTab">
+    <el-tab-pane label="用户列表" name="first">
+      <div class="user" v-for="user in state.chat.users" :key="user.id">
+        {{user.username}}
+        <div class="operate">
+          <el-button @click="onMic(user)">上麦</el-button>
+          <el-button @click="onKickOut(user)">踢出</el-button>
         </div>
-      </el-tab-pane>
-      <el-tab-pane label="消息" name="second">
-        <div :class="computeClass(state.user, message)" v-for="(message, index) in state.chat.messages" :key="index">
-          <div class="user">
-            <span time="username">{{message.username}}</span>
-            <span class="time">{{formatTimestamp(message.timestamp)}}</span>
-          </div>
-          <div class="content">
-            {{message.content}}
-          </div>
+      </div>
+    </el-tab-pane>
+    <el-tab-pane label="消息" name="second">
+      <div :class="computeClass(state.user, message)" v-for="(message, index) in state.chat.messages" :key="index">
+        <div class="user">
+          <span time="username">{{message.username}}</span>
+          <span class="time">{{formatTimestamp(message.timestamp)}}</span>
         </div>
-        <el-input v-model="state.message" @keyup.enter="onSendMsg"></el-input>
-      </el-tab-pane>
-    </el-tabs>
-  </div>
+        <div class="content">
+          {{message.content}}
+        </div>
+      </div>
+      <el-input v-model="state.message" @keyup.enter="onSendMsg"></el-input>
+    </el-tab-pane>
+  </el-tabs>
   <el-button @click="onJoin">join</el-button>
   <el-button @click="onLeave">leave</el-button>
   <el-button @click="onSendMsg">send message</el-button>
@@ -47,7 +49,7 @@ export default {
     });
     let {ctx:internalInstance} = getCurrentInstance();
 
-    const activeName = ref('first')
+    const activeName = ref('first');
     const handleSwitchTab = (tab, event) => {
       console.log(tab, event)
     }
@@ -58,6 +60,7 @@ export default {
       state.chat = createInstance(user.id, user.username, 'token');
       console.log('chat:::: ', state.chat);
       window.p = state.chat;
+      window.x = internalInstance;
       state.chat.join('room-test').then((res) => {
         console.log('onJoin:::: ', res);
       });
@@ -71,6 +74,7 @@ export default {
       });
       state.chat.on('ban', (reason) => {
         console.log('on::ban:::: ', reason);
+        state.chat = null;
       });
       state.chat.on('message', (message) => {
         console.log('on::message:::: ', message);
@@ -86,15 +90,18 @@ export default {
     function onSendMsg() {
       if (!state.message) return;
       state.chat.sendMessage(state.message).then((res) => {
-        console.log('onSendMsg:::: ', res);
+        console.log('send message succeed', res);
         state.message = '';
+      }).catch(err => {
+        console.log('send message failed', err);
       });
     }
 
-    function onKickOut() {
-      if (!state.choose) return;
-      state.chat.kickOut(state.choose).then((res) => {
-        console.log('onKickOut:::: ', res);
+    function onKickOut(user) {
+      state.chat.kickOut(user).then(() => {
+        console.log('kick out user succeed');
+      }).catch(err => {
+        console.log('kick out user failed', err);
       });
     }
 
@@ -138,12 +145,26 @@ export default {
       formatTimestamp,
     }
   },
+  computed: {
+    users() {
+      return this.state.chat ? this.state.chat.users : [];
+    },
+    messages() {
+      return this.state.chat ? this.state.chat.messages : [];
+    }
+  }
 }
 </script>
 
 <style scoped>
 .chat-room {
   max-width: 400px;
+}
+.user {
+  border-bottom: 1px;
+}
+.user .operate {
+  display: inline-block;
 }
 .message {
   margin: 10px 0;
