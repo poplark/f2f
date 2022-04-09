@@ -1,8 +1,8 @@
 <template>
 <div>
-  <el-tabs v-if="state.chat" type="border-card" v-model="activeName" class="chat-room" @tab-click="handleSwitchTab">
-    <el-tab-pane label="用户列表" name="first">
-      <div class="user" v-for="user in state.chat.users" :key="user.id">
+  <el-tabs v-if="state.isJoined" type="border-card" v-model="activeName" class="chat-room" @tab-click="handleSwitchTab">
+    <el-tab-pane label="用户列表" name="first" :key="state.userUpdateTimestamp">
+      <div class="user" v-for="user in getUsers()" :key="user.id">
         {{user.username}}
         <div class="operate">
           <el-button @click="onMic(user)">上麦</el-button>
@@ -10,8 +10,8 @@
         </div>
       </div>
     </el-tab-pane>
-    <el-tab-pane label="消息" name="second">
-      <div :class="computeClass(state.user, message)" v-for="(message, index) in state.chat.messages" :key="index">
+    <el-tab-pane label="消息" name="second" :key="state.messageUpdateTimestamp">
+      <div :class="computeClass(state.user, message)" v-for="(message, index) in getMessages()" :key="index">
         <div class="user">
           <span time="username">{{message.username}}</span>
           <span class="time">{{formatTimestamp(message.timestamp)}}</span>
@@ -43,10 +43,13 @@ export default {
   setup(props) {
     const state = reactive({
       user: props.user,
-      chat: null,
       choose: null,
-      message: ''
+      message: '',
+      isJoined: false,
+      userUpdateTimestamp: 0,
+      messageUpdateTimestamp: 0,
     });
+    let chat = null;
     let {ctx:internalInstance} = getCurrentInstance();
 
     const activeName = ref('first');
@@ -55,41 +58,48 @@ export default {
     }
 
     function onJoin() {
-      const { user, chat } = state;
+      const { user } = state;
       if (chat) return;
-      state.chat = createInstance(user.id, user.username, 'token');
-      console.log('chat:::: ', state.chat);
-      window.p = state.chat;
+      chat = createInstance(user.id, user.username, 'token');
+      console.log('chat:::: ', chat);
+      window.p = chat;
       window.x = internalInstance;
-      state.chat.join('room-test').then((res) => {
+      chat.join('room-test').then((res) => {
         console.log('onJoin:::: ', res);
+        state.isJoined = true;
       });
-      state.chat.on('user-online', (user) => {
+      chat.on('user-online', (user) => {
         console.log('on::user-online:::: ', user, internalInstance);
-        internalInstance.$forceUpdate();
+        // internalInstance.$forceUpdate();
+        state.userUpdateTimestamp = Date.now();
       });
-      state.chat.on('user-offline', (user) => {
+      chat.on('user-offline', (user) => {
         console.log('on::user-offline:::: ', user);
-        internalInstance.$forceUpdate();
+        // internalInstance.$forceUpdate();
+        state.userUpdateTimestamp = Date.now();
       });
-      state.chat.on('ban', (reason) => {
+      chat.on('ban', (reason) => {
         console.log('on::ban:::: ', reason);
-        state.chat = null;
+        chat = null;
+        state.isJoined = false;
       });
-      state.chat.on('message', (message) => {
+      chat.on('message', (message) => {
         console.log('on::message:::: ', message);
-        internalInstance.$forceUpdate();
+        // internalInstance.$forceUpdate();
+        state.messageUpdateTimestamp = Date.now();
       });
     }
     function onLeave() {
-      state.chat.leave().then((res) => {
+      chat.leave().then((res) => {
         console.log('onLeave:::: ', res);
+        chat = null;
+        state.isJoined = false;
       });
     }
 
     function onSendMsg() {
-      if (!state.message) return;
-      state.chat.sendMessage(state.message).then((res) => {
+      if (!state.message || !chat) return;
+      chat.sendMessage(state.message).then((res) => {
         console.log('send message succeed', res);
         state.message = '';
       }).catch(err => {
@@ -98,7 +108,7 @@ export default {
     }
 
     function onKickOut(user) {
-      state.chat.kickOut(user).then(() => {
+      chat.kickOut(user).then(() => {
         console.log('kick out user succeed');
       }).catch(err => {
         console.log('kick out user failed', err);
@@ -122,6 +132,13 @@ export default {
       }
     }
 
+    function getUsers() {
+      return chat ? chat.users : [];
+    }
+    function getMessages() {
+      return chat ? chat.messages : [];
+    }
+
     onMounted(() => {
       console.log('onMounted::', state.user);
     });
@@ -143,16 +160,10 @@ export default {
       onChooseUser,
       computeClass,
       formatTimestamp,
+      getUsers,
+      getMessages,
     }
   },
-  computed: {
-    users() {
-      return this.state.chat ? this.state.chat.users : [];
-    },
-    messages() {
-      return this.state.chat ? this.state.chat.messages : [];
-    }
-  }
 }
 </script>
 
