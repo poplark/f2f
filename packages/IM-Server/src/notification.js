@@ -37,7 +37,7 @@ function join(socket, roomId, userId, username) {
     userId,
     username,
   }, userId);
-  socket.broadcast.emit('notification', nio);
+  socket.to(roomId).except(userId).emit('notification', nio);
 }
 
 /**
@@ -53,7 +53,7 @@ function leave(socket, roomId, userId, reason) {
     userId,
     reason: reason ? reason : 'leave'
   }, userId);
-  socket.broadcast.emit('notification', nio);
+  socket.to(roomId).except(userId).emit('notification', nio);
 }
 
 /**
@@ -84,7 +84,7 @@ function leave4KickOut(socket, oldSocket, roomId, userId) {
     userId,
     reason: 'kick out'
   }, userId);
-  socket.broadcast.except(oldSocket.id).emit('notification', nio);
+  socket.to(roomId).except(oldSocket.id).emit('notification', nio);
 }
 
 /**

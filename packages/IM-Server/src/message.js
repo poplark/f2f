@@ -12,7 +12,7 @@ function message(socket, roomId, payload, from, to) {
     to
   }
   if (to === '@all') {
-    socket.broadcast.emit('message', msg);
+    socket.to(roomId).except(from).emit('message', msg);
     return;
   }
   const toSocket = getSocket(roomId, to);
