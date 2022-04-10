@@ -36,6 +36,9 @@ import { createInstance } from '@f2f/im-client';
 
 export default {
   props: {
+    room: {
+      default: ''
+    },
     user: {
       default: null,
     },
@@ -59,12 +62,9 @@ export default {
 
     function onJoin() {
       const { user } = state;
-      if (chat) return;
+      if (chat || !props.room) return;
       chat = createInstance(user.id, user.username, 'token');
-      console.log('chat:::: ', chat);
-      window.p = chat;
-      window.x = internalInstance;
-      chat.join('room-test').then((res) => {
+      chat.join(props.room).then((res) => {
         console.log('onJoin:::: ', res);
         state.isJoined = true;
       });

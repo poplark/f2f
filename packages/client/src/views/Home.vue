@@ -7,7 +7,9 @@
     </my-header>
     <el-container>
       <el-header>
-        <room v-if="state.user" :user="state.user"/>
+        <router-link v-for="room in state.rooms" :key="room.id" :to="getRoomLink(room)">
+          {{room.name}} |
+        </router-link>
       </el-header>
     </el-container>
   </div>
@@ -16,33 +18,45 @@
 <script>
 import { reactive, onMounted } from 'vue';
 import { get } from '../utils/service';
-import Room from '../components/Chat/Room.vue';
 
 export default {
-  components: {
-    'room': Room,
-  },
+  components: {},
   name: 'home',
   setup() {
     const state = reactive({
-      user: null,
+      rooms: [{
+        id: 1,
+        name: 'room1',
+      }, {
+        id: 2,
+        name: 'room2',
+      }, {
+        id: 3,
+        name: 'room3',
+      }],
     });
 
-    function getUser() {
-      get('/user')
+    function getRoom() {
+      get('/rooms')
         .then((data) => {
-          state.user = data;
+          console.log('rooms:: ', data);
+          state.rooms = data;
         })
         .catch((err) => {
-          console.warn('home::getUser:: ', err);
+          console.warn('room:getRooms:: ', err);
         });
     }
 
+    function getRoomLink(room) {
+      return `/room/${room.name}`;
+    }
+
     onMounted(() => {
-      getUser();
+      getRoom();
     });
     return {
-      state
+      state,
+      getRoomLink,
     }
   },
 };

@@ -13,6 +13,16 @@ const routes = [
       }
     },
   }, {
+    path: '/room/:roomId',
+    name: 'room',
+    component: () => import('../views/Room.vue'),
+    beforeEnter(to, from) {
+      const _isLogin = isLoginSync();
+      if (!_isLogin) {
+        return '/login';
+      }
+    },
+  }, {
     path: '/profile',
     name: 'profile',
     component: () => import('../views/Profile.vue'),
