@@ -1,6 +1,7 @@
 const Router = require('@koa/router');
 const init = require('./init');
 const user = require('./user');
+const room = require('./room');
 
 const rootRouter = new Router();
 
@@ -19,6 +20,8 @@ const apiRouter = new Router({
 });
 // api - user
 user(apiRouter);
+// api - room
+room(apiRouter);
 rootRouter.use(apiRouter.routes());
 
 module.exports = rootRouter;
