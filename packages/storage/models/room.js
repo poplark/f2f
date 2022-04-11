@@ -8,8 +8,19 @@ module.exports = function(sequelize, types) {
       unique: true,
     },
     name: {
+      type: types.STRING(255),
+      allowNull: false,
+    },
+    // RTC 房间媒体类型
+    // 'audio', 'video'
+    type: {
       type: types.STRING(50),
-      allowNull: true,
+      allowNull: false,
+      defaultValue: "video",
+    },
+    createUser: {
+      type: types.INTEGER.UNSIGNED,
+      allowNull: false,
     },
     password: {
       type: types.STRING(50),
@@ -25,13 +36,6 @@ module.exports = function(sequelize, types) {
     duration: {
       type: types.INTEGER.UNSIGNED,
       defaultValue: 3600,
-    },
-    // RTC 房间媒体类型
-    // 'audio', 'video'
-    type: {
-      type: types.STRING(50),
-      allowNull: false,
-      defaultValue: "video",
     }
   }, {
     tableName: 'room'
