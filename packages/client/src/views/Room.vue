@@ -25,10 +25,11 @@ export default {
   },
   name: 'room',
   setup() {
-    const { params } = useRoute();
+    const x = useRoute();
+    console.log('rrrrrrrrrrr', x);
     const state = reactive({
       user: null,
-      roomId: params.roomId,
+      roomId: x.params.roomId,
     });
 
     function getUser() {
