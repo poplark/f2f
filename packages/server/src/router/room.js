@@ -21,9 +21,9 @@ module.exports = function(router) {
       return;
     }
 
-    const { name, type, password, startAt, duration } = ctx.request.body;
+    const { name, isOpen, type, password, startAt, duration } = ctx.request.body;
 
-    ctx.body = await createRoom(ctx.orm, name, type, user.get('id'), password, startAt, duration);
+    ctx.body = await createRoom(ctx.orm, name, isOpen, type, user.get('id'), password, startAt, duration);
   });
   router.post('/room/alteration', async (ctx) => {
   });

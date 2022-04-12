@@ -25,11 +25,12 @@ module.exports = function(_exports) {
     return rooms;
   }
 
-  async function createRoom(orm, name, type, userId, password, startAt, duration) {
+  async function createRoom(orm, name, isOpen, type, userId, password, startAt, duration) {
     const { Room } = orm;
     const room = new Room({
       name,
       type: type === 'audio' ? type : 'video',
+      isOpen,
       createUser: userId,
       password,
       startAt,
