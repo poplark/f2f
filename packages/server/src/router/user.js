@@ -3,13 +3,15 @@ const {
   extractUserInfo,
   findUserByUserName,
   findUserById,
-  isValidPassword,
   findUserByAccount,
   createUser,
+  findRole,
+} = require('@f2f/storage');
+const {
+  isValidPassword,
   generateJWT,
   getJWTInfo,
 } = require('../controller/user');
-const { findRole } = require('../controller/role');
 const { logger } = require('../../config');
 
 module.exports = function(router) {
@@ -22,7 +24,7 @@ module.exports = function(router) {
     const info = JSON.parse(decode(infoCode));
     logger.debug('user info:: ', info);
     const { username } = info || ctx.query;
-    const user = await findUserByUserName(ctx, username);
+    const user = await findUserByUserName(ctx.orm, username);
     if (!user) {
       ctx.body = 'not found';
     } else {
@@ -31,7 +33,7 @@ module.exports = function(router) {
   });
   router.get('/user/:id', async (ctx) => {
     const { id } = ctx.params;
-    const user = await findUserById(ctx, id);
+    const user = await findUserById(ctx.orm, id);
     if (!user) {
       ctx.body = 'not found';
     } else {
@@ -49,7 +51,7 @@ module.exports = function(router) {
     const { username, password } = ctx.request.body;
     logger.info('register data:: ', username, password);
 
-    let user = await findUserByUserName(ctx, username);
+    let user = await findUserByUserName(ctx.orm, username);
     if (user) {
       ctx.status = 409;
       ctx.body = {
@@ -59,9 +61,9 @@ module.exports = function(router) {
       return;
     }
 
-    const role = await findRole(ctx, 'audience');
+    const role = await findRole(ctx.orm, 'audience');
 
-    user = await createUser(ctx, username, password, role);
+    user = await createUser(ctx.orm, username, password, role);
 
     ctx.body = extractUserInfo(user);
   });
@@ -69,7 +71,7 @@ module.exports = function(router) {
     logger.debug('headers::: ', Object.keys(ctx.request.headers));
     // const { authorization } = ctx.request.headers;
     const { username, password } = ctx.request.body;
-    const user = await findUserByAccount(ctx, username);
+    const user = await findUserByAccount(ctx.orm, username);
     logger.info('token:: ', username, password, user);
 
     if (isValidPassword(user, password)) {
@@ -96,7 +98,7 @@ module.exports = function(router) {
     }
     logger.debug('info::: ', info);
 
-    const user = await findUserById(ctx, info.id);
+    const user = await findUserById(ctx.orm, info.id);
     if (user && user.active) {
       ctx.body = generateJWT(user);
     } else {

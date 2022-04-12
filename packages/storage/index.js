@@ -10,9 +10,11 @@ module.exports = function() {
     const sequelize = new Sequelize(config);
     defineModels(sequelize, Sequelize.DataTypes);
 
-    ctx.orm = function () {
-      return sequelize.models;
-    }
+    ctx.orm = sequelize.models;
     return next();
   }
 }
+
+require('./controllers/room')(module.exports);
+require('./controllers/role')(module.exports);
+require('./controllers/user')(module.exports);

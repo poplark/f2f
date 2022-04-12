@@ -1,11 +1,11 @@
 const { decode } = require('js-base64');
-const { findUserByUserName } = require('../controller/user');
 const {
+  findUserByUserName,
   createRoom,
   editRoom,
   findRoomsByUserId,
   findRoomById,
-} = require('../controller/room');
+} = require('@f2f/storage');
 
 module.exports = function(router) {
   router.post('/room', async (ctx) => {
@@ -14,7 +14,7 @@ module.exports = function(router) {
     const infoCode = accessToken.split('.')[1];
     const info = JSON.parse(decode(infoCode));
     const { username } = info || ctx.query;
-    const user = await findUserByUserName(ctx, username);
+    const user = await findUserByUserName(ctx.orm, username);
 
     if (!user) {
       ctx.body = 'not found';
@@ -23,7 +23,7 @@ module.exports = function(router) {
 
     const { name, type, password, startAt, duration } = ctx.request.body;
 
-    ctx.body = await createRoom(ctx, name, type, user.get('id'), password, startAt, duration);
+    ctx.body = await createRoom(ctx.orm, name, type, user.get('id'), password, startAt, duration);
   });
   router.post('/room/alteration', async (ctx) => {
   });
@@ -33,14 +33,14 @@ module.exports = function(router) {
     const infoCode = accessToken.split('.')[1];
     const info = JSON.parse(decode(infoCode));
     const { username } = info || ctx.query;
-    const user = await findUserByUserName(ctx, username);
+    const user = await findUserByUserName(ctx.orm, username);
 
     if (!user) {
       ctx.body = 'not found';
       return;
     }
 
-    ctx.body = await findRoomsByUserId(ctx, user.get('id'));
+    ctx.body = await findRoomsByUserId(ctx.orm, user.get('id'));
   });
   router.get('/room/:id', async (ctx) => {
   });
