@@ -27,11 +27,11 @@ module.exports = function(sequelize, types) {
       allowNull: true,
     },
     isOpen: {
-      type: types.BOOLEAN(),
+      type: types.BOOLEAN,
       defaultValue: true,
     },
     startAt: {
-      type: types.DATE(),
+      type: types.DATE,
     },
     duration: {
       type: types.INTEGER.UNSIGNED,

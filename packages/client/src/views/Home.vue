@@ -14,11 +14,22 @@
           <el-table-column prop="id" label="#" width="80" />
           <el-table-column prop="name" label="房间名" width="180" />
           <el-table-column prop="type" label="类型" />
+          <el-table-column label="开始时间">
+            <template #default="scope">
+              <date-time :data="scope.row.startAt"/>
+            </template>
+          </el-table-column>
+          <el-table-column prop="duration" label="持续时长" />
+          <el-table-column label="创建时间">
+            <template #default="scope">
+              <date-time :data="scope.row.createdAt"/>
+            </template>
+          </el-table-column>
           <el-table-column prop="isOpen" label="公开" />
           <el-table-column label="操作">
             <template #default="scope">
-              <el-button type="text" size="small" @click="getRoomLink(scope.row)">进入</el-button>
-              <el-button v-if="state.currentUser.info && scope.row.createUser===state.currentUser.info.id" type="text" size="small" @click="deleteRoom(scope.row)">删除</el-button>
+              <el-button type="text" size="small" @click="onGoRoom(scope.row)">进入</el-button>
+              <el-button v-if="state.currentUser.info && scope.row.createUser===state.currentUser.info.id" type="text" size="small" @click="onDeleteRoom(scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -73,16 +84,7 @@ export default {
   setup() {
     const state = reactive({
       currentUser: currentUser.state,
-      rooms: [{
-        id: 1,
-        name: 'room1',
-      }, {
-        id: 2,
-        name: 'room2',
-      }, {
-        id: 3,
-        name: 'room3',
-      }],
+      rooms: [],
     });
 
     const formLabelWidth = '80px';
@@ -107,9 +109,18 @@ export default {
         });
     }
 
-    function getRoomLink(room) {
-      console.log('ooo router', router, room);
+    function onGoRoom(room) {
       return router.push({name: 'room', params: { roomId: room.id }});
+    }
+    function onDeleteRoom(room) {
+      post(`/room/delete/${room.id}`)
+        .then((data) => {
+          console.log('room:onDeleteRoom:: ', data);
+          getRoom();
+        })
+        .catch((err) => {
+          console.warn('room:onDeleteRoom:: ', err);
+        });
     }
 
     const savingRoom = ref(false);
@@ -145,7 +156,8 @@ export default {
       addRoomVisible,
       form,
       savingRoom,
-      getRoomLink,
+      onGoRoom,
+      onDeleteRoom,
       onCreateRoom,
     }
   },

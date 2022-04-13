@@ -25,7 +25,23 @@ module.exports = function(router) {
 
     ctx.body = await createRoom(ctx.orm, name, isOpen, type, user.get('id'), password, startAt, duration);
   });
-  router.post('/room/alteration', async (ctx) => {
+  router.post('/room/edit/:id', async (ctx) => {
+    const { id } = ctx.params;
+    const room = await findRoomById(ctx.orm, id);
+  });
+  router.post('/room/delete/:id', async (ctx) => {
+    const { id } = ctx.params;
+    const { authorization } = ctx.request.headers;
+    const accessToken = authorization.split(' ')[1];
+    const infoCode = accessToken.split('.')[1];
+    const info = JSON.parse(decode(infoCode));
+    const room = await findRoomById(ctx.orm, id);
+    if (room && room.createUser === info.id) {
+      await room.destroy();
+      ctx.body = {};
+    } else {
+      ctx.status = 404;
+    }
   });
   router.get('/rooms', async (ctx) => {
     const { authorization } = ctx.request.headers;

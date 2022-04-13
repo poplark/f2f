@@ -37,7 +37,7 @@ module.exports = function(sequelize, types) {
       }
     },
     active: {
-      type: types.BOOLEAN(),
+      type: types.BOOLEAN,
       defaultValue: true,
     },
     // 外键
