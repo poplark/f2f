@@ -9,8 +9,8 @@
     </el-col>
     <el-col :span="4" class="setting">
       <slot name="end"></slot>
-      <el-dropdown v-if="user.isLogin">
-        <el-avatar :size="30"> {{user.shortName || '&nbsp;'}} </el-avatar>
+      <el-dropdown v-if="state.isLogin">
+        <el-avatar :size="30"> {{state.shortName || '&nbsp;'}} </el-avatar>
         <el-icon><caret-bottom/></el-icon>
         <template #dropdown>
           <el-dropdown-menu>
@@ -28,35 +28,43 @@
 
 <script>
 import { reactive, onMounted, computed } from 'vue';
-import { get, logout, isLoginSync } from '../utils/service';
-import { router } from '../router';
+import { get, logout, isLoginSync } from '../../utils/service';
+import { router } from '../../router';
 import { CaretBottom } from '@element-plus/icons-vue';
+import { currentUser } from './currentUser';
 
 export default {
   components: {
     'caret-bottom': CaretBottom,
   },
   setup() {
-    const user = reactive({
+    const state = reactive({
       avatar: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
-      username: '',
-      shortName: computed(() => user.username.length > 2 ? user.username.substring(0, 1) : user.username),
+      currentUser: currentUser.state,
+      shortName: computed(() => {
+        const user = state.currentUser.info;
+        return user
+          ? user.username.length > 2
+            ? user.username.substring(0, 1)
+            : user.username
+          : '';
+      }),
       loading: false,
       error: null,
       isLogin: isLoginSync(),
     });
 
     function getUser() {
-      user.loading = true;
+      state.loading = true;
       get('/user')
         .then((data) => {
-          user.username = data.username;
+          currentUser.setUser(data);
         })
         .catch((err) => {
-          user.error = err;
+          state.error = err;
         })
         .finally(() => {
-          user.loading = false;
+          state.loading = false;
         });
     }
     function onProfile() {
@@ -77,12 +85,12 @@ export default {
     }
 
     onMounted(() => {
-      if (user.isLogin) {
+      if (state.isLogin) {
         getUser();
       }
     });
     return {
-      user,
+      state,
       onProfile,
       onAbout,
       onLogout,

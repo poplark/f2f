@@ -18,6 +18,7 @@
           <el-table-column label="操作">
             <template #default="scope">
               <el-button type="text" size="small" @click="getRoomLink(scope.row)">进入</el-button>
+              <el-button v-if="state.currentUser.info && scope.row.createUser===state.currentUser.info.id" type="text" size="small" @click="deleteRoom(scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -64,12 +65,14 @@
 import { reactive, ref, onMounted } from 'vue';
 import { get, post } from '../utils/service';
 import { router } from '../router';
+import { currentUser } from '../components/Header/currentUser';
 
 export default {
   components: {},
   name: 'home',
   setup() {
     const state = reactive({
+      currentUser: currentUser.state,
       rooms: [{
         id: 1,
         name: 'room1',
