@@ -5,6 +5,8 @@
 </template>>
 <script setup>
 import { defineProps } from 'vue';
+import { format } from 'date-fns';
+
 const props = defineProps({
   data: {
     type: String,
@@ -13,8 +15,7 @@ const props = defineProps({
 })
 function showDateTime(date) {
   if (date) {
-    const p = new Date(date);
-    return p.toLocaleString();
+    return format(new Date(date), 'yyyy-MM-dd HH:mm');
   }
   return date;
 }

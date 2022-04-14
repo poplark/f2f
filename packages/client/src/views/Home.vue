@@ -12,20 +12,20 @@
         </el-button>
         <el-table :data="state.rooms" style="width: 100%">
           <el-table-column prop="id" label="#" width="80" />
-          <el-table-column prop="name" label="房间名" width="180" />
+          <el-table-column prop="name" label="房间名" width="100" />
           <el-table-column prop="type" label="类型" />
-          <el-table-column label="开始时间">
+          <el-table-column label="公开" :formatter="showOpen" />
+          <el-table-column label="持续时长" :formatter="showDuration" />
+          <el-table-column label="开始时间" width="110">
             <template #default="scope">
               <date-time :data="scope.row.startAt"/>
             </template>
           </el-table-column>
-          <el-table-column prop="duration" label="持续时长" />
-          <el-table-column label="创建时间">
+          <el-table-column label="创建时间" width="110">
             <template #default="scope">
               <date-time :data="scope.row.createdAt"/>
             </template>
           </el-table-column>
-          <el-table-column prop="isOpen" label="公开" />
           <el-table-column label="操作">
             <template #default="scope">
               <el-button type="text" size="small" @click="onGoRoom(scope.row)">进入</el-button>
@@ -147,6 +147,16 @@ export default {
       });
     }
 
+    function showOpen(room) {
+      return room.isOpen ? '公开' : '非公开';
+    }
+
+    function showDuration(room) {
+      const seconds = room.duration;
+      const minutes = seconds / 60;
+      return Math.floor(minutes) + '分钟';
+    }
+
     onMounted(() => {
       getRoom();
     });
@@ -159,6 +169,8 @@ export default {
       onGoRoom,
       onDeleteRoom,
       onCreateRoom,
+      showOpen,
+      showDuration,
     }
   },
 };
