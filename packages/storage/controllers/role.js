@@ -1,4 +1,9 @@
 module.exports = function(_exports) {
+  async function findRoles(orm) {
+    const { Role } = orm;
+    return await Role.findAll();
+  }
+
   async function createRole(orm, roleType) {
     const { Permission, Role } = orm;
 
@@ -48,6 +53,7 @@ module.exports = function(_exports) {
   async function updateRole() {
   }
 
+  _exports.createRole = findRoles;
   _exports.createRole = createRole;
   _exports.findRole = findRole;
   _exports.removeRole = removeRole;
