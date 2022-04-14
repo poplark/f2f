@@ -1,6 +1,5 @@
 const { decode } = require('js-base64');
 const {
-  findUserByUserName,
   createRoom,
   editRoom,
   findRoomsByUserId,
@@ -9,21 +8,10 @@ const {
 
 module.exports = function(router) {
   router.post('/room', async (ctx) => {
-    const { authorization } = ctx.request.headers;
-    const accessToken = authorization.split(' ')[1];
-    const infoCode = accessToken.split('.')[1];
-    const info = JSON.parse(decode(infoCode));
-    const { username } = info || ctx.query;
-    const user = await findUserByUserName(ctx.orm, username);
-
-    if (!user) {
-      ctx.body = 'not found';
-      return;
-    }
-
+    const { id: userId } = ctx.userInfo;
     const { name, isOpen, type, password, startAt, duration } = ctx.request.body;
 
-    ctx.body = await createRoom(ctx.orm, name, isOpen, type, user.get('id'), password, startAt, duration);
+    ctx.body = await createRoom(ctx.orm, name, isOpen, type, userId, password, startAt, duration);
   });
   router.post('/room/edit/:id', async (ctx) => {
     const { id } = ctx.params;
@@ -31,12 +19,9 @@ module.exports = function(router) {
   });
   router.post('/room/delete/:id', async (ctx) => {
     const { id } = ctx.params;
-    const { authorization } = ctx.request.headers;
-    const accessToken = authorization.split(' ')[1];
-    const infoCode = accessToken.split('.')[1];
-    const info = JSON.parse(decode(infoCode));
+    const { id: userId } = ctx.userInfo;
     const room = await findRoomById(ctx.orm, id);
-    if (room && room.createUser === info.id) {
+    if (room && room.createUser === userId) {
       await room.destroy();
       ctx.body = {};
     } else {
@@ -44,19 +29,8 @@ module.exports = function(router) {
     }
   });
   router.get('/rooms', async (ctx) => {
-    const { authorization } = ctx.request.headers;
-    const accessToken = authorization.split(' ')[1];
-    const infoCode = accessToken.split('.')[1];
-    const info = JSON.parse(decode(infoCode));
-    const { username } = info || ctx.query;
-    const user = await findUserByUserName(ctx.orm, username);
-
-    if (!user) {
-      ctx.body = 'not found';
-      return;
-    }
-
-    ctx.body = await findRoomsByUserId(ctx.orm, user.get('id'));
+    const { id: userId } = ctx.userInfo;
+    ctx.body = await findRoomsByUserId(ctx.orm, userId);
   });
   router.get('/room/:id', async (ctx) => {
   });

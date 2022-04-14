@@ -17,13 +17,7 @@ const { logger } = require('../../config');
 module.exports = function(router) {
   // need auth
   router.get('/user', async (ctx) => {
-    const { authorization } = ctx.request.headers;
-    logger.info('user:: ', authorization);
-    const accessToken = authorization.split(' ')[1];
-    const infoCode = accessToken.split('.')[1];
-    const info = JSON.parse(decode(infoCode));
-    logger.debug('user info:: ', info);
-    const { username } = info || ctx.query;
+    const { username } = ctx.userInfo || ctx.query;
     const user = await findUserByUserName(ctx.orm, username);
     if (!user) {
       ctx.body = 'not found';
