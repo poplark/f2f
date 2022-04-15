@@ -2,12 +2,18 @@
   <div>
     <my-header>
       <template v-slot:front>
-        <span class="header-front">Home</span>
+        <span class="header-front">房间名：{{state.room && state.room.name}}</span>
       </template>
     </my-header>
     <el-container>
       <el-header>
-        <chat v-if="state.user" :room="state.roomId" :user="state.user"/>
+        <chat
+          v-if="state.room && state.currentUser.info"
+          :room="state.roomId"
+          :user="state.currentUser.info"
+          @chat-join="onChatJoin"
+          @chat-leave="onChatLeave"
+        />
       </el-header>
     </el-container>
   </div>
@@ -17,7 +23,8 @@
 import { reactive, onMounted } from 'vue';
 import { get } from '../utils/service';
 import Chat from '../components/Chat.vue';
-import { useRoute } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
+import { currentUser } from '../components/Header/currentUser';
 
 export default {
   components: {
@@ -25,28 +32,39 @@ export default {
   },
   name: 'room',
   setup() {
-    const x = useRoute();
-    console.log('rrrrrrrrrrr', x);
+    const router = useRouter();
+    const route = useRoute();
     const state = reactive({
-      user: null,
-      roomId: x.params.roomId,
+      currentUser: currentUser.state,
+      roomId: route.params.roomId,
+      room: null,
     });
 
-    function getUser() {
-      get('/user')
+    function getRoom() {
+      get(`/room/${state.roomId}`)
         .then((data) => {
-          state.user = data;
+          state.room = data;
         })
         .catch((err) => {
           console.warn('home::getUser:: ', err);
         });
     }
 
+    function onChatJoin() {
+      console.log('chat joined');
+    }
+    function onChatLeave() {
+      console.log('chat leaved');
+      router.replace({name: 'home'});
+    }
+
     onMounted(() => {
-      getUser();
+      getRoom();
     });
     return {
-      state
+      state,
+      onChatJoin,
+      onChatLeave,
     }
   },
 };

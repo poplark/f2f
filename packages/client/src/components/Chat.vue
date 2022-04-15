@@ -23,10 +23,6 @@
       <el-input v-model="state.message" @keyup.enter="onSendMsg"></el-input>
     </el-tab-pane>
   </el-tabs>
-  <el-button @click="onJoin">join</el-button>
-  <el-button @click="onLeave">leave</el-button>
-  <el-button @click="onSendMsg">send message</el-button>
-  <el-button @click="onKickOut">kick out</el-button>
 </div>
 </template>
 
@@ -43,7 +39,7 @@ export default {
       default: null,
     },
   },
-  setup(props) {
+  setup(props, context) {
     const state = reactive({
       user: props.user,
       choose: null,
@@ -53,7 +49,6 @@ export default {
       messageUpdateTimestamp: 0,
     });
     let chat = null;
-    let {ctx:internalInstance} = getCurrentInstance();
 
     const activeName = ref('first');
     const handleSwitchTab = (tab, event) => {
@@ -67,33 +62,33 @@ export default {
       chat.join(props.room).then((res) => {
         console.log('onJoin:::: ', res);
         state.isJoined = true;
+        context.emit('chat-join');
       });
       chat.on('user-online', (user) => {
-        console.log('on::user-online:::: ', user, internalInstance);
-        // internalInstance.$forceUpdate();
         state.userUpdateTimestamp = Date.now();
       });
       chat.on('user-offline', (user) => {
         console.log('on::user-offline:::: ', user);
-        // internalInstance.$forceUpdate();
         state.userUpdateTimestamp = Date.now();
       });
       chat.on('ban', (reason) => {
         console.log('on::ban:::: ', reason);
         chat = null;
         state.isJoined = false;
+        context.emit('chat-leave');
       });
       chat.on('message', (message) => {
         console.log('on::message:::: ', message);
-        // internalInstance.$forceUpdate();
         state.messageUpdateTimestamp = Date.now();
       });
     }
     function onLeave() {
+      if (!state.isJoined) return;
       chat.leave().then((res) => {
         console.log('onLeave:::: ', res);
         chat = null;
         state.isJoined = false;
+        context.emit('chat-leave');
       });
     }
 
@@ -140,6 +135,7 @@ export default {
     }
 
     onMounted(() => {
+      onJoin();
       console.log('onMounted::', state.user);
     });
     onUpdated(() => {
@@ -147,6 +143,7 @@ export default {
     });
     onBeforeUnmount(() => {
       console.log('onBeforeUnmount::', state.user);
+      onLeave();
     });
 
     return {

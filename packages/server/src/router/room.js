@@ -33,6 +33,15 @@ module.exports = function(router) {
     ctx.body = await findRoomsByUserId(ctx.orm, userId);
   });
   router.get('/room/:id', async (ctx) => {
+    const { id } = ctx.params;
+    const { id: userId } = ctx.userInfo;
+    const room = await findRoomById(ctx.orm, id);
+    if (room.get('createUser') !== userId && !room.get('isOpen')) {
+      ctx.status = 404;
+      ctx.body = {};
+      return;
+    }
+    ctx.body = room;
   });
   router.get('/room/:userId', async (ctx) => {
   });
