@@ -5,8 +5,8 @@
       <div class="user" v-for="user in getUsers()" :key="user.id">
         {{user.username}}
         <div class="operate">
-          <el-button @click="onMic(user)">上麦</el-button>
-          <el-button @click="onKickOut(user)">踢出</el-button>
+          <el-button v-if="state.user.id !== state.room.createUser" @click="onMic(user)">上麦</el-button>
+          <el-button v-if="state.user.id === state.room.createUser" @click="onKickOut(user)">踢出</el-button>
         </div>
       </div>
     </el-tab-pane>
