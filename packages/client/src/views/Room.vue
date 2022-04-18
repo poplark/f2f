@@ -9,7 +9,7 @@
       <el-header>
         <chat
           v-if="state.room && state.currentUser.info"
-          :room="state.roomId"
+          :room="state.room"
           :user="state.currentUser.info"
           @chat-join="onChatJoin"
           @chat-leave="onChatLeave"

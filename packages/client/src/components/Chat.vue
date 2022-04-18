@@ -27,13 +27,13 @@
 </template>
 
 <script>
-import { ref, reactive, getCurrentInstance, onMounted, onUpdated, onBeforeUnmount } from 'vue';
+import { ref, reactive, onMounted, onUpdated, onBeforeUnmount } from 'vue';
 import { createInstance } from '@f2f/im-client';
 
 export default {
   props: {
     room: {
-      default: ''
+      default: null,
     },
     user: {
       default: null,
@@ -47,6 +47,7 @@ export default {
       isJoined: false,
       userUpdateTimestamp: 0,
       messageUpdateTimestamp: 0,
+      room: props.room,
     });
     let chat = null;
 
@@ -59,7 +60,7 @@ export default {
       const { user } = state;
       if (chat || !props.room) return;
       chat = createInstance(user.id, user.username, 'token');
-      chat.join(props.room).then((res) => {
+      chat.join(props.room.id).then((res) => {
         console.log('onJoin:::: ', res);
         state.isJoined = true;
         context.emit('chat-join');
