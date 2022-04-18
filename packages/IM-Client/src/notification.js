@@ -4,6 +4,7 @@ const NIO = {
   online: 'online',
   offline: 'offline',
   ban: 'ban',
+  askMic: 'ask-mic',
   onMic: 'on-mic',
   offMic: 'off-mic',
 }
@@ -51,6 +52,36 @@ function offlineHandler(id) {
 }
 
 /**
+ * 请求上麦通知
+ */
+function askMicHandler(userId) {
+  const user = this.room.users.find(item => item.id === userId);
+  if (user) {
+    this.emit('ask-mic', user);
+  }
+}
+
+/**
+ * 允许上麦通知
+ */
+function onMicHandler(userId) {
+  const user = this.room.users.find(item => item.id === userId);
+  if (user) {
+    this.emit('on-mic', user);
+  }
+}
+
+/**
+ * 强制下麦通知
+ */
+function offMicHandler(userId) {
+  const user = this.room.users.find(item => item.id === userId);
+  if (user) {
+    this.emit('off-mic', user);
+  }
+}
+
+/**
  * 通知消息的处理
  * @param {*} nio 
  */
@@ -76,9 +107,14 @@ export function notificationHandler(nio) {
       this.connection.disconnect();
       this.emit('ban', payload.reason);
       break;
+    case NIO.askMic:
+      askMicHandler.call(this, payload.userId);
+      break;
     case NIO.onMic:
+      onMicHandler.call(this, payload.userId);
       break;
     case NIO.offMic:
+      offMicHandler.call(this, payload.userId);
       break;
     default:
       break;
