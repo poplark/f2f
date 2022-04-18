@@ -28,7 +28,7 @@
           </div>
         </div>
       </div>
-      <el-input class="send-box" v-model="state.message" @keyup.enter="onSendMsg" placeholder="输入消息">
+      <el-input class="send-box" v-model="state.message" @keyup.enter="onSendMsg" placeholder="输入消息" ref="inputRef">
         <template #append><el-button type="primary" @click="onSendMsg">发送</el-button></template>
       </el-input>
     </el-tab-pane>
@@ -115,11 +115,13 @@ export default {
       });
     }
 
+    const inputRef = ref(null);
     function onSendMsg() {
       if (!state.message || !chat) return;
       chat.sendMessage(state.message).then((res) => {
         console.log('send message succeed', res);
         state.message = '';
+        inputRef.value && inputRef.value.focus();
       }).catch(err => {
         console.log('send message failed', err);
       });
@@ -207,6 +209,7 @@ export default {
       activeName,
       handleSwitchTab,
       state,
+      inputRef,
       onJoin,
       onLeave,
       onSendMsg,
