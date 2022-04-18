@@ -4,6 +4,7 @@ const {
   editRoom,
   findRoomsByUserId,
   findRoomById,
+  extractRoomInfo,
 } = require('@f2f/storage');
 
 module.exports = function(router) {
@@ -26,22 +27,45 @@ module.exports = function(router) {
       ctx.body = {};
     } else {
       ctx.status = 404;
+      ctx.body = {};
     }
   });
   router.get('/rooms', async (ctx) => {
     const { id: userId } = ctx.userInfo;
     ctx.body = await findRoomsByUserId(ctx.orm, userId);
   });
-  router.get('/room/:id', async (ctx) => {
-    const { id } = ctx.params;
-    const { id: userId } = ctx.userInfo;
-    const room = await findRoomById(ctx.orm, id);
-    if (room.get('createUser') !== userId && !room.get('isOpen')) {
+  router.post('/room/validation', async (ctx) => {
+    const { roomId, password } = ctx.request.body;
+    const room = await findRoomById(ctx.orm, roomId);
+    if (!room) {
       ctx.status = 404;
       ctx.body = {};
       return;
     }
-    ctx.body = room;
+    if (room.password === password) {
+      ctx.body = {
+        isValidated: true,
+      };
+    } else {
+      ctx.body = {
+        isValidated: false,
+      };
+    }
+  });
+  router.get('/room/:id', async (ctx) => {
+    const { id } = ctx.params;
+    const { id: userId } = ctx.userInfo;
+    const room = await findRoomById(ctx.orm, id);
+    if (!room) {
+      ctx.status = 404;
+      ctx.body = {};
+      return;
+    }
+    if (room.createUser === userId) {
+      ctx.body = room;
+    } else {
+      ctx.body = extractRoomInfo(room);
+    }
   });
   router.get('/room/:userId', async (ctx) => {
   });

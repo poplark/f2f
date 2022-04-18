@@ -10,7 +10,22 @@ function isBlankValue(val) {
   return isNull(val) || isUndefined(val);
 }
 
+const ClientRequestAttributes = [
+  'id', 'name', 'type', 'createUser', 'isOpen', 'startAt', 'duration'
+];
+const ManagerRequestAttributes = [
+  'password'
+].concat(ClientRequestAttributes);
+
 module.exports = function(_exports) {
+  function extractRoomInfo(room) {
+    let res = {};
+    for (let key of ClientRequestAttributes) {
+      res[key] = room.getDataValue(key);
+    }
+    return res;
+  }
+
   async function findRoomsByUserId(orm, userId) {
     const { Room } = orm;
     const rooms = await Room.findAll({
@@ -71,6 +86,7 @@ module.exports = function(_exports) {
   async function findUserFromRoom() {
   }
 
+  _exports.extractRoomInfo = extractRoomInfo;
   _exports.findRoomsByUserId = findRoomsByUserId;
   _exports.createRoom = createRoom;
   _exports.findRoomById = findRoomById;
