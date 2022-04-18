@@ -84,12 +84,15 @@ export function createKickOutCommand(outUser, adminUser) {
 /**
  * 请求上麦
  * @param {*} user 
+ * @param {*} adminUser 
+ * @returns 
  */
-export function createAskMicCommand(user) {
+export function createAskMicCommand(user, adminUser) {
   return new Command(CMD.askMic, {
     roomId,
     userId: user.id,
-  }, user.id); // todo - 管理员？？？后台自动确认
+    adminUserId: adminUser.id,
+  }, user.id, adminUser.id);
 }
 
 /**

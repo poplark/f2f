@@ -108,6 +108,57 @@ function kickOut(socket, cmd) {
 }
 
 /**
+ * 请求上麦
+ * @param {*} socket 
+ * @param {*} cmd 
+ */
+function askMic(socket, cmd) {
+  const { roomId, userId } = socket.data;
+  const { to } = cmd;
+  const toSocket = Room.getSocket(roomId, to);
+  if (toSocket) {
+    response(socket, cmd, { roomId, userId });
+    Notification.askMic(socket, roomId, userId, to);
+  } else {
+    response(socket, cmd, { err: 'administrator is not online' });
+  }
+}
+
+/**
+ * 管理员通知用户，允许其上麦
+ * @param {*} socket 
+ * @param {*} cmd 
+ */
+function onMic(socket, cmd) {
+  const { roomId, userId } = socket.data;
+  const { to } = cmd;
+  const toSocket = Room.getSocket(roomId, to);
+  if (toSocket) {
+    response(socket, cmd, { roomId, userId });
+    Notification.onMic(socket, roomId, userId, to);
+  } else {
+    response(socket, cmd, { err: 'not online' });
+  }
+}
+
+/**
+ * 管理员通知用户，强制其下麦
+ * @param {*} socket 
+ * @param {*} cmd 
+ */
+function offMic(socket, cmd) {
+  const { roomId, userId } = socket.data;
+  const { to } = cmd;
+  const toSocket = Room.getSocket(roomId, to);
+  if (toSocket) {
+    response(socket, cmd, { roomId, userId });
+    Notification.offMic(socket, roomId, userId, to);
+  } else {
+    response(socket, cmd, { err: 'not online' });
+  }
+}
+
+/**
  * 消息处理
  * @param {*} socket 
  * @param {*} cmd 
@@ -146,10 +197,13 @@ module.exports = function(io, socket) {
         kickOut(socket, cmd);
         break;
       case CMD.askMic:
+        askMic(socket, cmd);
         break;
       case CMD.onMic:
+        onMic(socket, cmd);
         break;
       case CMD.offMic:
+        offMic(socket, cmd);
         break;
       case CMD.message:
         message(socket, cmd);

@@ -7,6 +7,9 @@ import {
   createJoinCommand,
   createLeaveCommand,
   createKickOutCommand,
+  createAskMicCommand,
+  createOnMicCommand,
+  createOffMicCommand,
   createTextMessage,
 } from './command';
 import { rejoinHandler, onlineHandler, notificationHandler } from './notification';
@@ -94,6 +97,34 @@ class Client extends EventEmitter {
    */
   async kickOut(user) {
     const cmd = createKickOutCommand(user, this.user);
+    return await this.connection.sendCommand(cmd);
+  }
+
+  /**
+   * 请求连麦
+   * @param {*} user 
+   * @returns 
+   */
+  async askMic(user) {
+    const cmd = createAskMicCommand(this.user, user);
+    return await this.connection.sendCommand(cmd);
+  }
+
+  /**
+   * 允许连麦
+   * @param {*} user 
+   */
+  async onMic(user) {
+    const cmd = createOnMicCommand(this.user, user);
+    return await this.connection.sendCommand(cmd);
+  }
+
+  /**
+   * 强制下麦
+   * @param {*} user 
+   */
+  async offMic(user) {
+    const cmd = createOffMicCommand(this.user, user);
     return await this.connection.sendCommand(cmd);
   }
 

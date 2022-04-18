@@ -4,6 +4,7 @@ const NIO = {
   online: 'online',
   offline: 'offline',
   ban: 'ban',
+  askMic: 'ask-mic',
   onMic: 'on-mic',
   offMic: 'off-mic',
 };
@@ -88,6 +89,23 @@ function leave4KickOut(socket, oldSocket, roomId, userId) {
 }
 
 /**
+ * 通知管理员，某用户请求上麦
+ * @param {*} socket 
+ * @param {*} roomId 
+ * @param {*} from 
+ * @param {*} to 
+ * @returns 
+ */
+function askMic(socket, roomId, from, to) {
+  const toSocket = getSocket(roomId, to);
+  if (!toSocket) return;
+  const nio = createNotification(NIO.askMic, {
+    roomId,
+    userId: from,
+  }, from, to);
+  socket.to(to).emit('notification', nio);
+}
+/**
  * 通知连麦者上麦
  * @param {*} socket 
  * @param {*} roomId 
@@ -128,6 +146,7 @@ module.exports = {
   leave,
   kickOut,
   leave4KickOut,
+  askMic,
   onMic,
   offMic,
 }
