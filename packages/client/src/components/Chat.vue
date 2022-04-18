@@ -5,7 +5,12 @@
       <div class="user" v-for="user in getUsers()" :key="user.id">
         {{user.username}}
         <div class="operate">
-          <el-button v-if="state.user.id !== state.room.createUser" @click="onMic(user)">上麦</el-button>
+          <el-button v-if="state.user.id !== state.room.createUser" @click="askMic()">请求上麦</el-button>
+          <p v-if="user.askMic">
+            <el-button @click="approveMic(user)">允许上麦</el-button>
+            <el-button @click="rejectMic(user)">拒绝上麦</el-button>
+          </p>
+          <el-button v-if="state.user.id === state.room.createUser" @click="offMic(user)">强制下麦</el-button>
           <el-button v-if="state.user.id === state.room.createUser" @click="onKickOut(user)">踢出</el-button>
         </div>
       </div>
@@ -78,6 +83,19 @@ export default {
         state.isJoined = false;
         context.emit('chat-leave');
       });
+      chat.on('ask-mic', (user) => {
+        console.log('user asked mic', user);
+        user.askMic = true;
+        state.userUpdateTimestamp = Date.now();
+      });
+      chat.on('on-mic', (user) => {
+        console.log('user on mic', user);
+        // todo rtc online;
+      });
+      chat.on('off-mic', (user) => {
+        console.log('user off mic', user);
+        // todo rtc offline;
+      });
       chat.on('message', (message) => {
         console.log('on::message:::: ', message);
         state.messageUpdateTimestamp = Date.now();
@@ -109,6 +127,39 @@ export default {
       }).catch(err => {
         console.log('kick out user failed', err);
       });
+    }
+
+    function askMic() {
+      const { room } = state;
+      const { createUser } = room;
+      chat.askMic({id: createUser})
+        .then((res) => {
+          console.log('ask mic success', res);
+        })
+        .catch((err) => {
+          console.log('ask mic failed', err);
+        });
+    }
+    function approveMic(user) {
+      chat.onMic(user)
+        .then((res) => {
+          console.log('on mic success', res);
+        })
+        .catch((err) => {
+          console.log('on mic failed', err);
+        });
+    }
+    function rejectMic(user) {
+      user.askMic = false;
+    }
+    function offMic(user) {
+      chat.onMic(user)
+        .then((res) => {
+          console.log('off mic success', res);
+        })
+        .catch((err) => {
+          console.log('off mic failed', err);
+        });
     }
 
     function onChooseUser(user) {
@@ -155,6 +206,10 @@ export default {
       onLeave,
       onSendMsg,
       onKickOut,
+      askMic,
+      approveMic,
+      rejectMic,
+      offMic,
       onChooseUser,
       computeClass,
       formatTimestamp,

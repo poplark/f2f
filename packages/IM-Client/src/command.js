@@ -89,7 +89,6 @@ export function createKickOutCommand(outUser, adminUser) {
  */
 export function createAskMicCommand(user, adminUser) {
   return new Command(CMD.askMic, {
-    roomId,
     userId: user.id,
     adminUserId: adminUser.id,
   }, user.id, adminUser.id);
@@ -103,7 +102,6 @@ export function createAskMicCommand(user, adminUser) {
  */
 export function createOnMicCommand(adminUser, onMicUser) {
   return new Command(CMD.onMic, {
-    roomId,
     userId: onMicUser.id,
   }, adminUser.id, onMicUser.id);
 }
@@ -116,7 +114,6 @@ export function createOnMicCommand(adminUser, onMicUser) {
  */
 export function createOffMicCommand(adminUser, offMicUser) {
   return new Command(CMD.offMic, {
-    roomId,
     userId: offMicUser.id,
   }, adminUser.id, offMicUser.id);
 }

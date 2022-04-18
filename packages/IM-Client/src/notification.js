@@ -64,21 +64,15 @@ function askMicHandler(userId) {
 /**
  * 允许上麦通知
  */
-function onMicHandler(userId) {
-  const user = this.room.users.find(item => item.id === userId);
-  if (user) {
-    this.emit('on-mic', user);
-  }
+function onMicHandler() {
+  this.emit('on-mic', this.user);
 }
 
 /**
  * 强制下麦通知
  */
-function offMicHandler(userId) {
-  const user = this.room.users.find(item => item.id === userId);
-  if (user) {
-    this.emit('off-mic', user);
-  }
+function offMicHandler() {
+  this.emit('off-mic', this.user);
 }
 
 /**
@@ -111,10 +105,10 @@ export function notificationHandler(nio) {
       askMicHandler.call(this, payload.userId);
       break;
     case NIO.onMic:
-      onMicHandler.call(this, payload.userId);
+      onMicHandler.call(this);
       break;
     case NIO.offMic:
-      offMicHandler.call(this, payload.userId);
+      offMicHandler.call(this);
       break;
     default:
       break;

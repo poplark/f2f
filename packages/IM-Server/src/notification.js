@@ -101,7 +101,7 @@ function askMic(socket, roomId, from, to) {
   if (!toSocket) return;
   const nio = createNotification(NIO.askMic, {
     roomId,
-    userId: to,
+    userId: from,
   }, from, to);
   socket.to(toSocket.id).emit('notification', nio);
 }
