@@ -1,12 +1,14 @@
 <template>
-  <div>
     <my-header>
       <template v-slot:front>
         <span class="header-front">房间名：{{state.room && state.room.name}}</span>
       </template>
     </my-header>
     <el-container>
-      <el-header>
+      <el-main>
+        main
+      </el-main>
+      <el-aside>
         <chat
           v-if="state.room && state.isLogin"
           :room="state.room"
@@ -14,7 +16,7 @@
           @chat-join="onChatJoin"
           @chat-leave="onChatLeave"
         />
-      </el-header>
+      </el-aside>
       <el-dialog
         v-model="loginDialogVisible"
         title="房间密码"
@@ -38,7 +40,6 @@
         </template>
       </el-dialog>
     </el-container>
-  </div>
 </template>
 
 <script>
@@ -132,5 +133,8 @@ export default {
 <style scoped>
 .header-front {
   line-height: 30px;
+}
+.el-aside {
+  overflow: hidden;
 }
 </style>

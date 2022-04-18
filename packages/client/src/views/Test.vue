@@ -1,5 +1,4 @@
 <template>
-  <div>
     <my-header>
       <template v-slot:front>
         <span class="header-front">Test</span>
@@ -13,7 +12,6 @@
       <button @click="refreshToken">RefreshToken</button>
       <button @click="getUser">GetUser</button>
     </div>
-  </div>
 </template>
 
 <script>

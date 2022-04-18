@@ -1,5 +1,4 @@
 <template>
-  <div>
     <my-header>
       <template v-slot:front>
         <span class="header-front">Register</span>
@@ -27,7 +26,6 @@
         </el-form>
       </el-main>
     </el-container>
-  </div>
 </template>
 
 <script>

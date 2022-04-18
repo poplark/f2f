@@ -1,34 +1,38 @@
 <template>
-<div>
   <el-tabs v-if="state.isJoined" type="border-card" v-model="activeName" class="chat-room" @tab-click="handleSwitchTab">
     <el-tab-pane label="用户列表" name="first" :key="state.userUpdateTimestamp">
-      <div class="user" v-for="user in getUsers()" :key="user.id">
-        {{user.username}}
-        <div class="operate">
-          <el-button v-if="state.user.id !== state.room.createUser" @click="askMic()">请求上麦</el-button>
-          <p v-if="user.askMic">
-            <el-button @click="approveMic(user)">允许上麦</el-button>
-            <el-button @click="rejectMic(user)">拒绝上麦</el-button>
-          </p>
-          <el-button v-if="state.user.id === state.room.createUser" @click="offMic(user)">强制下麦</el-button>
-          <el-button v-if="state.user.id === state.room.createUser" @click="onKickOut(user)">踢出</el-button>
+      <div class="users">
+        <div class="user" v-for="user in getUsers()" :key="user.id">
+          {{user.username}}
+          <div class="operate">
+            <el-button v-if="state.user.id !== state.room.createUser" @click="askMic()">请求上麦</el-button>
+            <p v-if="user.askMic">
+              <el-button @click="approveMic(user)">允许上麦</el-button>
+              <el-button @click="rejectMic(user)">拒绝上麦</el-button>
+            </p>
+            <el-button v-if="state.user.id === state.room.createUser" @click="offMic(user)">强制下麦</el-button>
+            <el-button v-if="state.user.id === state.room.createUser" @click="onKickOut(user)">踢出</el-button>
+          </div>
         </div>
       </div>
     </el-tab-pane>
     <el-tab-pane label="消息" name="second" :key="state.messageUpdateTimestamp">
-      <div :class="computeClass(state.user, message)" v-for="(message, index) in getMessages()" :key="index">
-        <div class="user">
-          <span time="username">{{message.username}}</span>
-          <span class="time">{{formatTimestamp(message.timestamp)}}</span>
-        </div>
-        <div class="content">
-          {{message.content}}
+      <div class="messages">
+        <div :class="computeClass(state.user, message)" v-for="(message, index) in getMessages()" :key="index">
+          <div class="user">
+            <span time="username">{{message.username}}</span>
+            <span class="time">{{formatTimestamp(message.timestamp)}}</span>
+          </div>
+          <div class="content">
+            {{message.content}}
+          </div>
         </div>
       </div>
-      <el-input v-model="state.message" @keyup.enter="onSendMsg"></el-input>
+      <el-input class="send-box" v-model="state.message" @keyup.enter="onSendMsg" placeholder="输入消息">
+        <template #append><el-button type="primary" @click="onSendMsg">发送</el-button></template>
+      </el-input>
     </el-tab-pane>
   </el-tabs>
-</div>
 </template>
 
 <script>
@@ -221,9 +225,27 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .chat-room {
+  display: flex;
+  flex-direction: column;
   max-width: 400px;
+  height: 100%;
+}
+.chat-room > .el-tabs__content {
+  flex: 1;
+  padding: 0;
+}
+.chat-room .el-tab-pane {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.chat-room .el-tab-pane .users,
+.chat-room .el-tab-pane .messages {
+  flex: 1;
+  padding: 6px;
+  overflow-y: auto;
 }
 .user {
   border-bottom: 1px;
@@ -259,5 +281,7 @@ export default {
 .message.myself .content {
   background-color: #A7E879;
 }
-
+.el-tab-pane .message-box {
+  height: 30px;
+}
 </style>

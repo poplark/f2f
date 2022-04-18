@@ -1,5 +1,4 @@
 <template>
-  <div>
     <my-header>
       <template v-slot:front>
         <span class="header-front">Home</span>
@@ -40,7 +39,6 @@
         </el-table>
       </el-main>
     </el-container>
-  </div>
   <el-dialog v-model="addRoomVisible" title="创建房间">
     <el-form :loading="savingRoom" :model="form">
       <el-form-item label="房间名" :label-width="formLabelWidth">
