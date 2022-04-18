@@ -101,9 +101,9 @@ function askMic(socket, roomId, from, to) {
   if (!toSocket) return;
   const nio = createNotification(NIO.askMic, {
     roomId,
-    userId: from,
+    userId: to,
   }, from, to);
-  socket.to(to).emit('notification', nio);
+  socket.to(toSocket.id).emit('notification', nio);
 }
 /**
  * 通知连麦者上麦
@@ -120,7 +120,7 @@ function onMic(socket, roomId, from, to) {
     roomId,
     userId: to,
   }, from, to);
-  socket.to(to).emit('notification', nio);
+  socket.to(toSocket.id).emit('notification', nio);
 }
 
 /**
@@ -138,7 +138,7 @@ function offMic(socket, roomId, from, to) {
     roomId,
     userId: to,
   }, from, to);
-  socket.to(to).emit('notification', nio);
+  socket.to(toSocket.id).emit('notification', nio);
 }
 
 module.exports = {
