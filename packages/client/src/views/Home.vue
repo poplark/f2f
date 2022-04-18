@@ -6,14 +6,19 @@
       </template>
     </my-header>
     <el-container>
-      <el-header>
-        <el-button type="text" @click="addRoomVisible = true">
+      <el-main>
+        <el-button type="primary" @click="addRoomVisible = true">
           创建房间
         </el-button>
         <el-table :data="state.rooms" style="width: 100%">
-          <el-table-column prop="id" label="#" width="80" />
+          <el-table-column prop="id" label="#" width="30" />
           <el-table-column prop="name" label="房间名" width="100" />
           <el-table-column prop="type" label="类型" />
+          <el-table-column label="密码" width="120" >
+            <template #default="scope">
+              <show-password :data="scope.row.password"/>
+            </template>
+          </el-table-column>
           <el-table-column label="公开" :formatter="showOpen" />
           <el-table-column label="持续时长" :formatter="showDuration" />
           <el-table-column label="开始时间" width="110">
@@ -26,14 +31,14 @@
               <date-time :data="scope.row.createdAt"/>
             </template>
           </el-table-column>
-          <el-table-column label="操作">
+          <el-table-column label="操作" width="100">
             <template #default="scope">
               <el-button type="text" size="small" @click="onGoRoom(scope.row)">进入</el-button>
               <el-button v-if="state.currentUser.info && scope.row.createUser===state.currentUser.info.id" type="text" size="small" @click="onDeleteRoom(scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
-      </el-header>
+      </el-main>
     </el-container>
   </div>
   <el-dialog v-model="addRoomVisible" title="创建房间">
@@ -77,9 +82,12 @@ import { reactive, ref, onMounted } from 'vue';
 import { get, post } from '../utils/service';
 import { router } from '../router';
 import { currentUser } from '../components/Header/currentUser';
+import ShowPassword from '../components/ShowPassword.vue';
 
 export default {
-  components: {},
+  components: {
+    'show-password': ShowPassword,
+  },
   name: 'home',
   setup() {
     const state = reactive({

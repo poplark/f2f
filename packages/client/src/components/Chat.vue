@@ -151,6 +151,7 @@ export default {
     }
     function rejectMic(user) {
       user.askMic = false;
+      state.userUpdateTimestamp = Date.now();
     }
     function offMic(user) {
       chat.onMic(user)
