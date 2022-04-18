@@ -8,7 +8,11 @@
       <el-main>
         main
       </el-main>
-      <el-aside>
+      <el-aside :class="hideChat?'hide':''">
+        <el-icon class="hide-chat-button" @click="onHideChat">
+          <svg v-if="hideChat" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" data-v-ba633cb8=""><path fill="currentColor" d="M529.408 149.376a29.12 29.12 0 0 1 41.728 0 30.592 30.592 0 0 1 0 42.688L259.264 511.936l311.872 319.936a30.592 30.592 0 0 1-.512 43.264 29.12 29.12 0 0 1-41.216-.512L197.76 534.272a32 32 0 0 1 0-44.672l331.648-340.224zm256 0a29.12 29.12 0 0 1 41.728 0 30.592 30.592 0 0 1 0 42.688L515.264 511.936l311.872 319.936a30.592 30.592 0 0 1-.512 43.264 29.12 29.12 0 0 1-41.216-.512L453.76 534.272a32 32 0 0 1 0-44.672l331.648-340.224z"></path></svg>
+          <svg v-else viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" data-v-ba633cb8=""><path fill="currentColor" d="M452.864 149.312a29.12 29.12 0 0 1 41.728.064L826.24 489.664a32 32 0 0 1 0 44.672L494.592 874.624a29.12 29.12 0 0 1-41.728 0 30.592 30.592 0 0 1 0-42.752L764.736 512 452.864 192a30.592 30.592 0 0 1 0-42.688zm-256 0a29.12 29.12 0 0 1 41.728.064L570.24 489.664a32 32 0 0 1 0 44.672L238.592 874.624a29.12 29.12 0 0 1-41.728 0 30.592 30.592 0 0 1 0-42.752L508.736 512 196.864 192a30.592 30.592 0 0 1 0-42.688z"></path></svg>
+        </el-icon>
         <chat
           v-if="state.room && state.isLogin"
           :room="state.room"
@@ -116,6 +120,11 @@ export default {
       }
     });
 
+    const hideChat = ref(false);
+    function onHideChat() {
+      hideChat.value = !hideChat.value;
+    }
+
     onMounted(() => {
       getRoom();
     });
@@ -125,6 +134,8 @@ export default {
       onChatJoin,
       onChatLeave,
       onValidatePassword,
+      hideChat,
+      onHideChat,
     }
   },
 };
@@ -135,6 +146,22 @@ export default {
   line-height: 30px;
 }
 .el-aside {
-  overflow: hidden;
+  position: relative;
+  transition-property: width;
+  transition-duration: .5s;
+  transition-timing-function: ease-in;
+  overflow: visible;
+}
+.el-aside.hide {
+  width: 0px;
+}
+.hide-chat-button {
+  position: absolute;
+  left: -16px;
+  top: 50%;
+  padding: 6px 0;
+  border: 1px solid #ccc;
+  border-right: 0;
+  cursor: pointer;
 }
 </style>
