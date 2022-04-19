@@ -6,7 +6,11 @@
     </my-header>
     <el-container>
       <el-main>
-        main
+        <conference
+          v-if="state.room"
+          :room="state.room"
+          ref="conferenceRef"
+        />
       </el-main>
       <el-aside :class="hideChat?'hide':''">
         <el-icon class="hide-chat-button" @click="onHideChat">
@@ -55,10 +59,12 @@ import { get, post } from '../utils/service';
 import Chat from '../components/Chat.vue';
 import { useRouter, useRoute } from 'vue-router';
 import { currentUser } from '../components/Header/currentUser';
+import Conference from '../components/Conference.vue'
 
 export default {
   components: {
     'chat': Chat,
+    'conference': Conference,
   },
   name: 'room',
   setup() {
@@ -92,8 +98,11 @@ export default {
         });
     }
 
+    const conferenceRef = ref(null);
+
     function onChatJoin() {
-      console.log('chat joined');
+      console.log('chat joined', conferenceRef.value);
+      conferenceRef.value && conferenceRef.value.join(state.roomId, state.currentUser.info.username);
     }
     function onChatLeave() {
       console.log('chat leaved');
@@ -139,6 +148,7 @@ export default {
       onValidatePassword,
       hideChat,
       onHideChat,
+      conferenceRef,
     }
   },
 };
