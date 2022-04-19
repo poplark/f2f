@@ -10,7 +10,7 @@
 </template>
 
 <script setup>
-import { defineProps, defineExpose, reactive, ref, onMounted, getCurrentInstance } from 'vue'
+import { defineProps, defineExpose, nextTick, reactive, ref, onMounted, onUnmounted, getCurrentInstance } from 'vue'
 import { getRTCInstance } from '../rtc';
 import { ElMessage, ElNotification } from 'element-plus';
 import Stream from './Stream.vue';
@@ -41,18 +41,41 @@ function join(channel, username) {
   rtc.join(channel, username)
     .then((res) => {
       console.log('join room success', res);
-      rtc.publish();
+      rtc.publish()
+        .then(() => {
+          const localStream = rtc.localStream
+          nextTick(() => {
+            if (localStream) {
+              rtc.playLocalStream(localStream)
+            }
+          })
+        })
+        .catch((err) => {
+          ElNotification.error({
+            title: '发布失败',
+            message: `${err}`
+          })
+        })
     })
     .catch((err) => {
       console.log('join room failed', err);
     });
 }
 
+function leave() {
+  rtc.leave();
+}
+
 onMounted(() => {
   console.log('mounted conference');
 });
 
+onUnmounted(() => {
+  leave();
+});
+
 defineExpose({
   join,
+  leave,
 });
 </script>

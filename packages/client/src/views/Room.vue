@@ -102,10 +102,11 @@ export default {
 
     function onChatJoin() {
       console.log('chat joined', conferenceRef.value);
-      conferenceRef.value && conferenceRef.value.join(state.roomId, state.currentUser.info.username);
+      conferenceRef.value && conferenceRef.value.join(state.room.name, state.currentUser.info.username);
     }
     function onChatLeave() {
       console.log('chat leaved');
+      conferenceRef.value && conferenceRef.value.leave();
       router.replace({name: 'home'});
     }
 
