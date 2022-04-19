@@ -232,7 +232,7 @@ export default {
 .chat-room {
   display: flex;
   flex-direction: column;
-  max-width: 400px;
+  min-width: 300px;
   height: 100%;
 }
 .chat-room > .el-tabs__content {

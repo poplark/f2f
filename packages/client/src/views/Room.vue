@@ -20,6 +20,9 @@
           @chat-join="onChatJoin"
           @chat-leave="onChatLeave"
         />
+        <el-tabs v-else type="border-card" class="chat-room">
+          <!-- 占位 -->
+        </el-tabs>
       </el-aside>
       <el-dialog
         v-model="loginDialogVisible"
@@ -148,7 +151,7 @@ export default {
 .el-aside {
   position: relative;
   transition-property: width;
-  transition-duration: .5s;
+  transition-duration: .25s;
   transition-timing-function: ease-in;
   overflow: visible;
 }
@@ -163,5 +166,7 @@ export default {
   border: 1px solid #ccc;
   border-right: 0;
   cursor: pointer;
+  background-color: #fff;
+  box-shadow: -1px 2px 2px 0 rgb(0 0 0 / 12%);
 }
 </style>
