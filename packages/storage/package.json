@@ -21,7 +21,8 @@
     "url": "git+https://github.com/poplark/f2f.git"
   },
   "scripts": {
-    "test": "echo \"Error: run tests from root\" && exit 1"
+    "test": "echo \"Error: run tests from root\" && exit 1",
+    "initDB": "node table-generator.js"
   },
   "bugs": {
     "url": "https://github.com/poplark/f2f/issues"

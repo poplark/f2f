@@ -15,26 +15,33 @@ const sequelize = new Sequelize(
   }
 );
 
-require('./models/permission')(sequelize, Sequelize.DataTypes);
-require('./models/role')(sequelize, Sequelize.DataTypes);
-require('./models/user')(sequelize, Sequelize.DataTypes);
-require('./models/room')(sequelize, Sequelize.DataTypes);
+sequelize
+  .authenticate()
+  .then(() => {
+    require('./models/permission')(sequelize, Sequelize.DataTypes);
+    require('./models/role')(sequelize, Sequelize.DataTypes);
+    require('./models/user')(sequelize, Sequelize.DataTypes);
+    require('./models/room')(sequelize, Sequelize.DataTypes);
 
-// Create all the table defined using
-// sequelize in Database
+    // Create all the table defined using
+    // sequelize in Database
 
-if (process.env.NODE_ENV === 'production') {
+    if (process.env.NODE_ENV === 'production') {
 
-// Sync all models that are not
-// already in the database
-sequelize.sync();
+    // Sync all models that are not
+    // already in the database
+    sequelize.sync();
 
-} else {
+    } else {
 
-// Force sync all models
-// It will drop the table first
-// and re-create it afterwards
-sequelize.sync();
-// sequelize.sync({force:true});
+    // Force sync all models
+    // It will drop the table first
+    // and re-create it afterwards
+    sequelize.sync();
+    // sequelize.sync({force:true});
 
-}
+    }
+  })
+  .catch((err) => {
+    console.error('连接数据库失败，请确保数据库已经创建并开启服务，错误信息：', err);
+  });
